@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- ==================== PRIMARY (Green) ==================== -->
+    <color name="primary">#2E7D32</color>
+    <color name="primary_dark">#1B5E20</color>
+    <color name="primary_light">#4CAF50</color>
+
+    <!-- ==================== ACCENT (Amber / Gold) ==================== -->
+    <color name="accent">#FFC107</color>
+    <color name="accent_dark">#FFA000</color>
+
+    <!-- ==================== BACKGROUNDS ==================== -->
+    <color name="bg_main">#F5F5F5</color>
+    <color name="bg_card">#FFFFFF</color>
+    <color name="bg_input">#F0F4F0</color>
+
+    <!-- ==================== TEXT ==================== -->
+    <color name="text_primary">#212121</color>
+    <color name="text_secondary">#757575</color>
+    <color name="text_hint">#BDBDBD</color>
+    <color name="text_white">#FFFFFF</color>
+
+    <!-- ==================== DIVIDER ==================== -->
+    <color name="divider">#E0E0E0</color>
+
+    <!-- ==================== SLOT STATUS ==================== -->
+    <color name="slot_available">#FFFFFF</color>
+    <color name="slot_booked">#EF5350</color>
+    <color name="slot_locked">#9E9E9E</color>
+    <color name="slot_event">#AB47BC</color>
+
+    <!-- ==================== SYSTEM UI ==================== -->
+    <color name="status_bar">#1B5E20</color>
+
+    <!-- ==================== RATING ==================== -->
+    <color name="rating_star">#FFC107</color>
+
+    <!-- ==================== MISC ==================== -->
+    <color name="transparent">#00000000</color>
+    <color name="overlay_dark">#80000000</color>
+    <color name="chip_bg">#E8F5E9</color>
+    <color name="chip_active_bg">#2E7D32</color>
+
+    <!-- ==================== ALIASES (dùng trong layout/styles) ==================== -->
+    <color name="green_primary">#2E7D32</color>
+    <color name="green_dark">#1B5E20</color>
+    <color name="green_accent">#4CAF50</color>
+    <color name="bg_screen">#F5F5F5</color>
+    <color name="bottom_nav_active">#2E7D32</color>
+    <color name="bottom_nav_inactive">#9E9E9E</color>
+
+</resources>

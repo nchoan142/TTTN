@@ -1,0 +1,779 @@
+package com.conghoan.sportbooking.activity;
+
+import android.os.Bundle;
+import android.text.InputType;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.conghoan.sportbooking.R;
+import com.conghoan.sportbooking.adapter.AdminBookingAdapter;
+import com.conghoan.sportbooking.adapter.AdminCategoryAdapter;
+import com.conghoan.sportbooking.adapter.AdminUserAdapter;
+import com.conghoan.sportbooking.adapter.AdminVenueAdapter;
+import com.conghoan.sportbooking.api.ApiClient;
+import com.conghoan.sportbooking.api.ApiService;
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
+public class AdminActivity extends AppCompatActivity {
+
+    private static final int TAB_USERS = 0;
+    private static final int TAB_VENUES = 1;
+    private static final int TAB_BOOKINGS = 2;
+    private static final int TAB_CATEGORIES = 3;
+
+    private TextView tvStatUsers, tvStatVenues, tvStatBookings, tvStatRevenue;
+    private MaterialButton btnTabUsers, btnTabVenues, btnTabBookings, btnTabCategories;
+    private RecyclerView rvList;
+    private ProgressBar progressBar;
+    private TextView tvEmpty;
+    private ImageButton btnBack;
+    private FloatingActionButton fabAdd;
+
+    private ApiService apiService;
+    private int currentTab = TAB_USERS;
+
+    private List<Map<String, Object>> userList = new ArrayList<>();
+    private List<Map<String, Object>> venueList = new ArrayList<>();
+    private List<Map<String, Object>> bookingList = new ArrayList<>();
+    private List<Map<String, Object>> categoryList = new ArrayList<>();
+
+    private AdminUserAdapter userAdapter;
+    private AdminVenueAdapter venueAdapter;
+    private AdminBookingAdapter bookingAdapter;
+    private AdminCategoryAdapter categoryAdapter;
+
+    private final NumberFormat currencyFormat = NumberFormat.getInstance(new Locale("vi", "VN"));
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_admin);
+
+        apiService = ApiClient.getApiService();
+
+        initViews();
+        setupAdapters();
+        setupListeners();
+        loadStats();
+        switchTab(TAB_USERS);
+    }
+
+    private void initViews() {
+        btnBack = findViewById(R.id.btn_back);
+        tvStatUsers = findViewById(R.id.tv_stat_users);
+        tvStatVenues = findViewById(R.id.tv_stat_venues);
+        tvStatBookings = findViewById(R.id.tv_stat_bookings);
+        tvStatRevenue = findViewById(R.id.tv_stat_revenue);
+        btnTabUsers = findViewById(R.id.btn_tab_users);
+        btnTabVenues = findViewById(R.id.btn_tab_venues);
+        btnTabBookings = findViewById(R.id.btn_tab_bookings);
+        btnTabCategories = findViewById(R.id.btn_tab_categories);
+        rvList = findViewById(R.id.rv_admin_list);
+        progressBar = findViewById(R.id.progress_bar);
+        tvEmpty = findViewById(R.id.tv_empty);
+        fabAdd = findViewById(R.id.fab_add);
+
+        rvList.setLayoutManager(new LinearLayoutManager(this));
+    }
+
+    private void setupAdapters() {
+        // User adapter with role change + delete
+        userAdapter = new AdminUserAdapter(this, userList, (user, position) -> showRoleDialog(user, position));
+        userAdapter.setDeleteListener((user, position) -> showDeleteUserDialog(user, position));
+
+        // Venue adapter with toggle
+        venueAdapter = new AdminVenueAdapter(this, venueList, (venue, position) -> toggleVenue(venue, position));
+
+        // Booking adapter with confirm + detail click
+        bookingAdapter = new AdminBookingAdapter(this, bookingList);
+        bookingAdapter.setConfirmListener((booking, position) -> confirmBooking(booking, position));
+        bookingAdapter.setClickListener((booking, position) -> showBookingDetailDialog(booking));
+
+        // Category adapter with edit + delete
+        categoryAdapter = new AdminCategoryAdapter(this, categoryList, new AdminCategoryAdapter.OnCategoryActionListener() {
+            @Override
+            public void onEditClick(Map<String, Object> category, int position) {
+                showEditCategoryDialog(category, position);
+            }
+
+            @Override
+            public void onDeleteClick(Map<String, Object> category, int position) {
+                showDeleteCategoryDialog(category, position);
+            }
+        });
+    }
+
+    private void setupListeners() {
+        btnBack.setOnClickListener(v -> finish());
+        btnTabUsers.setOnClickListener(v -> switchTab(TAB_USERS));
+        btnTabVenues.setOnClickListener(v -> switchTab(TAB_VENUES));
+        btnTabBookings.setOnClickListener(v -> switchTab(TAB_BOOKINGS));
+        btnTabCategories.setOnClickListener(v -> switchTab(TAB_CATEGORIES));
+
+        fabAdd.setOnClickListener(v -> {
+            if (currentTab == TAB_CATEGORIES) {
+                showCreateCategoryDialog();
+            }
+        });
+    }
+
+    private void switchTab(int tab) {
+        currentTab = tab;
+
+        // Update tab button styles
+        setTabActive(btnTabUsers, tab == TAB_USERS);
+        setTabActive(btnTabVenues, tab == TAB_VENUES);
+        setTabActive(btnTabBookings, tab == TAB_BOOKINGS);
+        setTabActive(btnTabCategories, tab == TAB_CATEGORIES);
+
+        // Show/hide FAB
+        fabAdd.setVisibility(tab == TAB_CATEGORIES ? View.VISIBLE : View.GONE);
+
+        switch (tab) {
+            case TAB_USERS:
+                rvList.setAdapter(userAdapter);
+                loadUsers();
+                break;
+            case TAB_VENUES:
+                rvList.setAdapter(venueAdapter);
+                loadVenues();
+                break;
+            case TAB_BOOKINGS:
+                rvList.setAdapter(bookingAdapter);
+                loadBookings();
+                break;
+            case TAB_CATEGORIES:
+                rvList.setAdapter(categoryAdapter);
+                loadCategories();
+                break;
+        }
+    }
+
+    private void setTabActive(MaterialButton btn, boolean active) {
+        if (active) {
+            btn.setBackgroundTintList(android.content.res.ColorStateList.valueOf(0xFF2E7D32));
+            btn.setTextColor(0xFFFFFFFF);
+        } else {
+            btn.setBackgroundTintList(android.content.res.ColorStateList.valueOf(0xFFE0E0E0));
+            btn.setTextColor(0xFF757575);
+        }
+    }
+
+    // ============ LOAD STATS ============
+
+    private void loadStats() {
+        apiService.getAdminStats().enqueue(new Callback<Map<String, Object>>() {
+            @Override
+            public void onResponse(Call<Map<String, Object>> call, Response<Map<String, Object>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    Map<String, Object> body = response.body();
+                    Map<String, Object> data = body;
+                    if (body.containsKey("data") && body.get("data") instanceof Map) {
+                        data = (Map<String, Object>) body.get("data");
+                    }
+
+                    tvStatUsers.setText(String.valueOf(getInt(data, "totalUsers")));
+                    tvStatVenues.setText(String.valueOf(getInt(data, "totalVenues")));
+                    tvStatBookings.setText(String.valueOf(getInt(data, "totalBookings")));
+
+                    double revenue = getDouble(data, "totalRevenue");
+                    tvStatRevenue.setText(currencyFormat.format(revenue) + "đ");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Map<String, Object>> call, Throwable t) {
+                Toast.makeText(AdminActivity.this, "Lỗi tải thống kê: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    // ============ LOAD USERS ============
+
+    private void loadUsers() {
+        showLoading(true);
+        apiService.getAdminUsers().enqueue(new Callback<Map<String, Object>>() {
+            @Override
+            public void onResponse(Call<Map<String, Object>> call, Response<Map<String, Object>> response) {
+                showLoading(false);
+                if (response.isSuccessful() && response.body() != null) {
+                    Map<String, Object> body = response.body();
+                    List<Map<String, Object>> data = extractList(body);
+                    userList.clear();
+                    userList.addAll(data);
+                    userAdapter.notifyDataSetChanged();
+                    tvEmpty.setVisibility(userList.isEmpty() ? View.VISIBLE : View.GONE);
+                    btnTabUsers.setText("Người dùng (" + userList.size() + ")");
+                } else {
+                    tvEmpty.setVisibility(View.VISIBLE);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Map<String, Object>> call, Throwable t) {
+                showLoading(false);
+                tvEmpty.setVisibility(View.VISIBLE);
+                Toast.makeText(AdminActivity.this, "Lỗi tải danh sách người dùng", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    // ============ LOAD VENUES ============
+
+    private void loadVenues() {
+        showLoading(true);
+        apiService.getAdminVenues().enqueue(new Callback<Map<String, Object>>() {
+            @Override
+            public void onResponse(Call<Map<String, Object>> call, Response<Map<String, Object>> response) {
+                showLoading(false);
+                if (response.isSuccessful() && response.body() != null) {
+                    Map<String, Object> body = response.body();
+                    List<Map<String, Object>> data = extractList(body);
+                    venueList.clear();
+                    venueList.addAll(data);
+                    venueAdapter.notifyDataSetChanged();
+                    tvEmpty.setVisibility(venueList.isEmpty() ? View.VISIBLE : View.GONE);
+                } else {
+                    tvEmpty.setVisibility(View.VISIBLE);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Map<String, Object>> call, Throwable t) {
+                showLoading(false);
+                tvEmpty.setVisibility(View.VISIBLE);
+                Toast.makeText(AdminActivity.this, "Lỗi tải danh sách sân", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    // ============ LOAD BOOKINGS ============
+
+    private void loadBookings() {
+        showLoading(true);
+        apiService.getAdminBookings().enqueue(new Callback<Map<String, Object>>() {
+            @Override
+            public void onResponse(Call<Map<String, Object>> call, Response<Map<String, Object>> response) {
+                showLoading(false);
+                if (response.isSuccessful() && response.body() != null) {
+                    Map<String, Object> body = response.body();
+                    List<Map<String, Object>> data = extractList(body);
+                    bookingList.clear();
+                    bookingList.addAll(data);
+                    bookingAdapter.notifyDataSetChanged();
+                    tvEmpty.setVisibility(bookingList.isEmpty() ? View.VISIBLE : View.GONE);
+                } else {
+                    tvEmpty.setVisibility(View.VISIBLE);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Map<String, Object>> call, Throwable t) {
+                showLoading(false);
+                tvEmpty.setVisibility(View.VISIBLE);
+                Toast.makeText(AdminActivity.this, "Lỗi tải danh sách lịch đặt", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    // ============ LOAD CATEGORIES ============
+
+    private void loadCategories() {
+        showLoading(true);
+        apiService.getAdminCategories().enqueue(new Callback<Map<String, Object>>() {
+            @Override
+            public void onResponse(Call<Map<String, Object>> call, Response<Map<String, Object>> response) {
+                showLoading(false);
+                if (response.isSuccessful() && response.body() != null) {
+                    Map<String, Object> body = response.body();
+                    List<Map<String, Object>> data = extractList(body);
+                    categoryList.clear();
+                    categoryList.addAll(data);
+                    categoryAdapter.notifyDataSetChanged();
+                    tvEmpty.setVisibility(categoryList.isEmpty() ? View.VISIBLE : View.GONE);
+                } else {
+                    tvEmpty.setVisibility(View.VISIBLE);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Map<String, Object>> call, Throwable t) {
+                showLoading(false);
+                tvEmpty.setVisibility(View.VISIBLE);
+                Toast.makeText(AdminActivity.this, "Lỗi tải danh mục", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    // ============ ROLE DIALOG ============
+
+    private void showRoleDialog(Map<String, Object> user, int position) {
+        String currentRole = user.get("role") != null ? user.get("role").toString() : "USER";
+        String userName = user.get("fullName") != null ? user.get("fullName").toString() : "N/A";
+        String[] roles = {"USER", "OWNER", "ADMIN"};
+        int checkedIndex = 0;
+        for (int i = 0; i < roles.length; i++) {
+            if (roles[i].equals(currentRole)) {
+                checkedIndex = i;
+                break;
+            }
+        }
+
+        final int[] selected = {checkedIndex};
+
+        new AlertDialog.Builder(this)
+                .setTitle("Đổi vai trò: " + userName)
+                .setSingleChoiceItems(roles, checkedIndex, (dialog, which) -> selected[0] = which)
+                .setPositiveButton("Xác nhận", (dialog, which) -> {
+                    String newRole = roles[selected[0]];
+                    if (!newRole.equals(currentRole)) {
+                        updateUserRole(user, position, newRole);
+                    }
+                })
+                .setNegativeButton("Huỷ", null)
+                .show();
+    }
+
+    private void updateUserRole(Map<String, Object> user, int position, String newRole) {
+        long userId = getLongId(user);
+        if (userId == -1) {
+            Toast.makeText(this, "Lỗi: Không xác định được ID người dùng", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        Map<String, Object> body = new HashMap<>();
+        body.put("role", newRole);
+
+        apiService.updateUserRole(userId, body).enqueue(new Callback<Map<String, Object>>() {
+            @Override
+            public void onResponse(Call<Map<String, Object>> call, Response<Map<String, Object>> response) {
+                if (response.isSuccessful()) {
+                    user.put("role", newRole);
+                    userAdapter.notifyItemChanged(position);
+                    Toast.makeText(AdminActivity.this, "Đã cập nhật vai trò thành " + newRole, Toast.LENGTH_SHORT).show();
+                    loadStats();
+                } else {
+                    Toast.makeText(AdminActivity.this, "Lỗi cập nhật vai trò", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Map<String, Object>> call, Throwable t) {
+                Toast.makeText(AdminActivity.this, "Lỗi kết nối: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    // ============ DELETE USER ============
+
+    private void showDeleteUserDialog(Map<String, Object> user, int position) {
+        String userName = user.get("fullName") != null ? user.get("fullName").toString() : "N/A";
+
+        new AlertDialog.Builder(this)
+                .setTitle("Xóa người dùng")
+                .setMessage("Bạn có chắc muốn xóa người dùng \"" + userName + "\"?\nHành động này không thể hoàn tác.")
+                .setPositiveButton("Xóa", (dialog, which) -> deleteUser(user, position))
+                .setNegativeButton("Huỷ", null)
+                .show();
+    }
+
+    private void deleteUser(Map<String, Object> user, int position) {
+        long userId = getLongId(user);
+        if (userId == -1) {
+            Toast.makeText(this, "Lỗi: Không xác định được ID người dùng", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        apiService.deleteUser(userId).enqueue(new Callback<Map<String, Object>>() {
+            @Override
+            public void onResponse(Call<Map<String, Object>> call, Response<Map<String, Object>> response) {
+                if (response.isSuccessful()) {
+                    userList.remove(position);
+                    userAdapter.notifyItemRemoved(position);
+                    userAdapter.notifyItemRangeChanged(position, userList.size());
+                    btnTabUsers.setText("Người dùng (" + userList.size() + ")");
+                    Toast.makeText(AdminActivity.this, "Đã xóa người dùng thành công", Toast.LENGTH_SHORT).show();
+                    loadStats();
+                } else {
+                    Toast.makeText(AdminActivity.this, "Lỗi xóa người dùng", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Map<String, Object>> call, Throwable t) {
+                Toast.makeText(AdminActivity.this, "Lỗi kết nối: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    // ============ TOGGLE VENUE ============
+
+    private void toggleVenue(Map<String, Object> venue, int position) {
+        long venueId = getLongId(venue);
+        if (venueId == -1) {
+            Toast.makeText(this, "Lỗi: Không xác định được ID sân", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        apiService.toggleVenue(venueId).enqueue(new Callback<Map<String, Object>>() {
+            @Override
+            public void onResponse(Call<Map<String, Object>> call, Response<Map<String, Object>> response) {
+                if (response.isSuccessful()) {
+                    boolean currentActive = getBool(venue, "active");
+                    venue.put("active", !currentActive);
+                    venueAdapter.notifyItemChanged(position);
+                    String msg = !currentActive ? "Đã mở sân hoạt động" : "Đã khoá sân";
+                    Toast.makeText(AdminActivity.this, msg, Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(AdminActivity.this, "Lỗi chuyển đổi trạng thái sân", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Map<String, Object>> call, Throwable t) {
+                Toast.makeText(AdminActivity.this, "Lỗi kết nối: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    // ============ CONFIRM BOOKING ============
+
+    private void confirmBooking(Map<String, Object> booking, int position) {
+        long bookingId = getLongId(booking);
+        if (bookingId == -1) {
+            Toast.makeText(this, "Lỗi: Không xác định được ID lịch đặt", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        new AlertDialog.Builder(this)
+                .setTitle("Xác nhận đặt sân")
+                .setMessage("Bạn có chắc muốn xác nhận lịch đặt này?")
+                .setPositiveButton("Xác nhận", (dialog, which) -> {
+                    Map<String, Object> body = new HashMap<>();
+                    body.put("status", "CONFIRMED");
+
+                    apiService.updateBookingStatus(bookingId, body).enqueue(new Callback<Map<String, Object>>() {
+                        @Override
+                        public void onResponse(Call<Map<String, Object>> call, Response<Map<String, Object>> response) {
+                            if (response.isSuccessful()) {
+                                booking.put("status", "CONFIRMED");
+                                bookingAdapter.notifyItemChanged(position);
+                                Toast.makeText(AdminActivity.this, "Đã xác nhận lịch đặt", Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(AdminActivity.this, "Lỗi xác nhận lịch đặt", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<Map<String, Object>> call, Throwable t) {
+                            Toast.makeText(AdminActivity.this, "Lỗi kết nối: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                })
+                .setNegativeButton("Huỷ", null)
+                .show();
+    }
+
+    // ============ BOOKING DETAIL DIALOG ============
+
+    @SuppressWarnings("unchecked")
+    private void showBookingDetailDialog(Map<String, Object> booking) {
+        // User info
+        String userName = "";
+        String userEmail = "";
+        String userPhone = "";
+        Object userObj = booking.get("user");
+        if (userObj instanceof Map) {
+            Map<String, Object> user = (Map<String, Object>) userObj;
+            userName = getStr(user, "fullName");
+            userEmail = getStr(user, "email");
+            userPhone = getStr(user, "phone");
+        }
+        if (userName.isEmpty()) userName = getStr(booking, "userName");
+
+        // Court info
+        String courtInfo = "";
+        Object courtObj = booking.get("court");
+        if (courtObj instanceof Map) {
+            Map<String, Object> court = (Map<String, Object>) courtObj;
+            courtInfo = getStr(court, "name");
+            Object venueObj = court.get("venue");
+            if (venueObj instanceof Map) {
+                String venueName = getStr((Map<String, Object>) venueObj, "name");
+                if (!venueName.isEmpty()) courtInfo += " - " + venueName;
+            }
+        }
+        if (courtInfo.isEmpty()) courtInfo = getStr(booking, "courtName");
+
+        String date = getStr(booking, "bookingDate");
+        String startTime = getStr(booking, "startTime");
+        String endTime = getStr(booking, "endTime");
+        String status = getStr(booking, "status");
+        double totalPrice = getDouble(booking, "totalPrice");
+
+        String statusLabel;
+        switch (status) {
+            case "PENDING": statusLabel = "Chờ xác nhận"; break;
+            case "CONFIRMED": statusLabel = "Đã xác nhận"; break;
+            case "COMPLETED": statusLabel = "Hoàn thành"; break;
+            case "CANCELLED": statusLabel = "Đã huỷ"; break;
+            default: statusLabel = status; break;
+        }
+
+        StringBuilder detail = new StringBuilder();
+        detail.append("Người đặt: ").append(userName.isEmpty() ? "N/A" : userName).append("\n");
+        if (!userEmail.isEmpty()) detail.append("Email: ").append(userEmail).append("\n");
+        if (!userPhone.isEmpty()) detail.append("SĐT: ").append(userPhone).append("\n");
+        detail.append("\nSân: ").append(courtInfo.isEmpty() ? "--" : courtInfo).append("\n");
+        detail.append("Ngày: ").append(date).append("\n");
+        detail.append("Giờ: ").append(startTime).append(" - ").append(endTime).append("\n");
+        detail.append("Giá: ").append(totalPrice > 0 ? currencyFormat.format(totalPrice) + "đ" : "--").append("\n");
+        detail.append("Trạng thái: ").append(statusLabel);
+
+        new AlertDialog.Builder(this)
+                .setTitle("Chi tiết lịch đặt")
+                .setMessage(detail.toString())
+                .setPositiveButton("Đóng", null)
+                .show();
+    }
+
+    // ============ CATEGORY CRUD ============
+
+    private void showCreateCategoryDialog() {
+        LinearLayout layout = new LinearLayout(this);
+        layout.setOrientation(LinearLayout.VERTICAL);
+        layout.setPadding(48, 32, 48, 0);
+
+        EditText edtName = new EditText(this);
+        edtName.setHint("Tên danh mục");
+        edtName.setInputType(InputType.TYPE_CLASS_TEXT);
+        layout.addView(edtName);
+
+        EditText edtIconUrl = new EditText(this);
+        edtIconUrl.setHint("URL biểu tượng (không bắt buộc)");
+        edtIconUrl.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_URI);
+        layout.addView(edtIconUrl);
+
+        new AlertDialog.Builder(this)
+                .setTitle("Thêm danh mục mới")
+                .setView(layout)
+                .setPositiveButton("Tạo", (dialog, which) -> {
+                    String name = edtName.getText().toString().trim();
+                    String iconUrl = edtIconUrl.getText().toString().trim();
+
+                    if (name.isEmpty()) {
+                        Toast.makeText(this, "Vui lòng nhập tên danh mục", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    Map<String, String> body = new HashMap<>();
+                    body.put("name", name);
+                    if (!iconUrl.isEmpty()) {
+                        body.put("iconUrl", iconUrl);
+                    }
+
+                    apiService.createCategory(body).enqueue(new Callback<Map<String, Object>>() {
+                        @Override
+                        public void onResponse(Call<Map<String, Object>> call, Response<Map<String, Object>> response) {
+                            if (response.isSuccessful()) {
+                                Toast.makeText(AdminActivity.this, "Đã tạo danh mục \"" + name + "\"", Toast.LENGTH_SHORT).show();
+                                loadCategories();
+                            } else {
+                                Toast.makeText(AdminActivity.this, "Lỗi tạo danh mục", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<Map<String, Object>> call, Throwable t) {
+                            Toast.makeText(AdminActivity.this, "Lỗi kết nối: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                })
+                .setNegativeButton("Huỷ", null)
+                .show();
+    }
+
+    private void showEditCategoryDialog(Map<String, Object> category, int position) {
+        String currentName = getStr(category, "name");
+        String currentIconUrl = getStr(category, "iconUrl");
+
+        LinearLayout layout = new LinearLayout(this);
+        layout.setOrientation(LinearLayout.VERTICAL);
+        layout.setPadding(48, 32, 48, 0);
+
+        EditText edtName = new EditText(this);
+        edtName.setHint("Tên danh mục");
+        edtName.setText(currentName);
+        edtName.setInputType(InputType.TYPE_CLASS_TEXT);
+        layout.addView(edtName);
+
+        EditText edtIconUrl = new EditText(this);
+        edtIconUrl.setHint("URL biểu tượng");
+        edtIconUrl.setText(currentIconUrl);
+        edtIconUrl.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_URI);
+        layout.addView(edtIconUrl);
+
+        new AlertDialog.Builder(this)
+                .setTitle("Sửa danh mục")
+                .setView(layout)
+                .setPositiveButton("Lưu", (dialog, which) -> {
+                    String name = edtName.getText().toString().trim();
+                    String iconUrl = edtIconUrl.getText().toString().trim();
+
+                    if (name.isEmpty()) {
+                        Toast.makeText(this, "Vui lòng nhập tên danh mục", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    long categoryId = getLongId(category);
+                    if (categoryId == -1) {
+                        Toast.makeText(this, "Lỗi: Không xác định được ID danh mục", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    Map<String, String> body = new HashMap<>();
+                    body.put("name", name);
+                    body.put("iconUrl", iconUrl);
+
+                    apiService.updateCategory(categoryId, body).enqueue(new Callback<Map<String, Object>>() {
+                        @Override
+                        public void onResponse(Call<Map<String, Object>> call, Response<Map<String, Object>> response) {
+                            if (response.isSuccessful()) {
+                                category.put("name", name);
+                                category.put("iconUrl", iconUrl);
+                                categoryAdapter.notifyItemChanged(position);
+                                Toast.makeText(AdminActivity.this, "Đã cập nhật danh mục", Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(AdminActivity.this, "Lỗi cập nhật danh mục", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<Map<String, Object>> call, Throwable t) {
+                            Toast.makeText(AdminActivity.this, "Lỗi kết nối: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                })
+                .setNegativeButton("Huỷ", null)
+                .show();
+    }
+
+    private void showDeleteCategoryDialog(Map<String, Object> category, int position) {
+        String name = getStr(category, "name");
+
+        new AlertDialog.Builder(this)
+                .setTitle("Xóa danh mục")
+                .setMessage("Bạn có chắc muốn xóa danh mục \"" + name + "\"?\nHành động này không thể hoàn tác.")
+                .setPositiveButton("Xóa", (dialog, which) -> {
+                    long categoryId = getLongId(category);
+                    if (categoryId == -1) {
+                        Toast.makeText(this, "Lỗi: Không xác định được ID danh mục", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    apiService.deleteCategory(categoryId).enqueue(new Callback<Map<String, Object>>() {
+                        @Override
+                        public void onResponse(Call<Map<String, Object>> call, Response<Map<String, Object>> response) {
+                            if (response.isSuccessful()) {
+                                categoryList.remove(position);
+                                categoryAdapter.notifyItemRemoved(position);
+                                categoryAdapter.notifyItemRangeChanged(position, categoryList.size());
+                                Toast.makeText(AdminActivity.this, "Đã xóa danh mục \"" + name + "\"", Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(AdminActivity.this, "Lỗi xóa danh mục", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<Map<String, Object>> call, Throwable t) {
+                            Toast.makeText(AdminActivity.this, "Lỗi kết nối: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                })
+                .setNegativeButton("Huỷ", null)
+                .show();
+    }
+
+    // ============ HELPERS ============
+
+    private void showLoading(boolean show) {
+        progressBar.setVisibility(show ? View.VISIBLE : View.GONE);
+        if (show) {
+            tvEmpty.setVisibility(View.GONE);
+        }
+    }
+
+    private long getLongId(Map<String, Object> map) {
+        Object idObj = map.get("id");
+        if (idObj instanceof Number) {
+            return ((Number) idObj).longValue();
+        }
+        try {
+            return Long.parseLong(String.valueOf(idObj));
+        } catch (Exception e) {
+            return -1;
+        }
+    }
+
+    private String getStr(Map<String, Object> map, String key) {
+        Object val = map.get(key);
+        return val != null ? val.toString() : "";
+    }
+
+    @SuppressWarnings("unchecked")
+    private List<Map<String, Object>> extractList(Map<String, Object> body) {
+        Object data = body.get("data");
+        if (data instanceof List) {
+            return (List<Map<String, Object>>) data;
+        }
+        return new ArrayList<>();
+    }
+
+    private int getInt(Map<String, Object> map, String key) {
+        Object val = map.get(key);
+        if (val instanceof Number) return ((Number) val).intValue();
+        try {
+            return Integer.parseInt(String.valueOf(val));
+        } catch (Exception e) {
+            return 0;
+        }
+    }
+
+    private double getDouble(Map<String, Object> map, String key) {
+        Object val = map.get(key);
+        if (val instanceof Number) return ((Number) val).doubleValue();
+        try {
+            return Double.parseDouble(String.valueOf(val));
+        } catch (Exception e) {
+            return 0;
+        }
+    }
+
+    private boolean getBool(Map<String, Object> map, String key) {
+        Object val = map.get(key);
+        if (val instanceof Boolean) return (Boolean) val;
+        return "true".equalsIgnoreCase(String.valueOf(val));
+    }
+}

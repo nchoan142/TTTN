@@ -1,0 +1,19 @@
+SPORTBOOKING - DANH SÁCH TÀI KHOẢN TEST
+
+1. Người dùng (USER)
+   - Email:    hoan@test.com
+   - Mật khẩu: 123456
+   - Họ tên:   Nguyễn Công Hoàn
+   - SĐT:      0912345678
+
+2. Chủ sân (OWNER)
+   - Email:    owner@test.com
+   - Mật khẩu: 123456
+   - Họ tên:   Chủ sân Demo
+   - SĐT:      0987654321
+
+3. Quản trị viên (ADMIN)
+   - Email:    admin@test.com
+   - Mật khẩu: 123456
+   - Họ tên:   Admin System
+   - SĐT:      0900000000

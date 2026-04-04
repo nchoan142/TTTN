@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+
+    <!-- Ball outer circle -->
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#FF2E7D32"
+        android:strokeWidth="2"
+        android:pathData="M12,12m-9,0a9,9 0,1 1,18 0a9,9 0,1 1,-18 0" />
+
+    <!-- Vertical center seam -->
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#FF2E7D32"
+        android:strokeWidth="1.5"
+        android:strokeLineCap="round"
+        android:pathData="M12,3L12,21" />
+
+    <!-- Horizontal center seam -->
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#FF2E7D32"
+        android:strokeWidth="1.5"
+        android:strokeLineCap="round"
+        android:pathData="M3,12L21,12" />
+
+    <!-- Left curve seam -->
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#FF2E7D32"
+        android:strokeWidth="1.5"
+        android:strokeLineCap="round"
+        android:pathData="M5,5C8,8 8,16 5,19" />
+
+    <!-- Right curve seam -->
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#FF2E7D32"
+        android:strokeWidth="1.5"
+        android:strokeLineCap="round"
+        android:pathData="M19,5C16,8 16,16 19,19" />
+
+</vector>

@@ -1,0 +1,321 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- ==================== APP ==================== -->
+    <string name="app_name">SportBooking</string>
+    <string name="app_tagline">Đặt sân thể thao dễ dàng</string>
+
+    <!-- ==================== SPLASH ==================== -->
+    <string name="splash_loading">Đang tải\u2026</string>
+    <string name="splash_welcome">Chào mừng đến SportBooking</string>
+
+    <!-- ==================== AUTH CHUNG ==================== -->
+    <string name="btn_login">Đăng nhập</string>
+    <string name="btn_register">Đăng ký</string>
+    <string name="btn_logout">Đăng xuất</string>
+    <string name="btn_continue">Tiếp tục</string>
+    <string name="btn_confirm">Xác nhận</string>
+    <string name="btn_cancel">Hủy</string>
+    <string name="btn_back">Quay lại</string>
+    <string name="btn_save">Lưu</string>
+    <string name="btn_edit">Chỉnh sửa</string>
+    <string name="btn_delete">Xóa</string>
+    <string name="btn_close">Đóng</string>
+    <string name="btn_ok">OK</string>
+    <string name="btn_retry">Thử lại</string>
+    <string name="btn_apply">Áp dụng</string>
+    <string name="btn_search">Tìm kiếm</string>
+    <string name="btn_filter">Lọc</string>
+    <string name="btn_view_all">Xem tất cả</string>
+    <string name="btn_book_now">Đặt ngay</string>
+    <string name="btn_pay_now">Thanh toán ngay</string>
+
+    <!-- ==================== LOGIN ==================== -->
+    <string name="title_login">Đăng nhập</string>
+    <string name="hint_phone">Số điện thoại</string>
+    <string name="hint_email">Email</string>
+    <string name="hint_password">Mật khẩu</string>
+    <string name="hint_confirm_password">Xác nhận mật khẩu</string>
+    <string name="label_forgot_password">Quên mật khẩu?</string>
+    <string name="label_no_account">Chưa có tài khoản? </string>
+    <string name="label_have_account">Đã có tài khoản? </string>
+    <string name="label_or">Hoặc</string>
+    <string name="label_login_with">Đăng nhập với</string>
+    <string name="login_google">Đăng nhập bằng Google</string>
+    <string name="login_facebook">Đăng nhập bằng Facebook</string>
+    <string name="login_success">Đăng nhập thành công!</string>
+    <string name="login_failed">Đăng nhập thất bại. Vui lòng thử lại.</string>
+
+    <!-- ==================== REGISTER ==================== -->
+    <string name="title_register">Tạo tài khoản</string>
+    <string name="hint_full_name">Họ và tên</string>
+    <string name="hint_username">Tên người dùng</string>
+    <string name="hint_birthdate">Ngày sinh</string>
+    <string name="label_gender">Giới tính</string>
+    <string name="gender_male">Nam</string>
+    <string name="gender_female">Nữ</string>
+    <string name="gender_other">Khác</string>
+    <string name="label_terms">Tôi đồng ý với </string>
+    <string name="label_terms_link">Điều khoản sử dụng</string>
+    <string name="label_and"> và </string>
+    <string name="label_privacy_link">Chính sách bảo mật</string>
+    <string name="register_success">Đăng ký thành công! Vui lòng đăng nhập.</string>
+    <string name="register_failed">Đăng ký thất bại. Vui lòng thử lại.</string>
+
+    <!-- ==================== FORGOT PASSWORD ==================== -->
+    <string name="title_forgot_password">Quên mật khẩu</string>
+    <string name="desc_forgot_password">Nhập email hoặc số điện thoại để nhận mã xác thực đặt lại mật khẩu.</string>
+    <string name="btn_send_otp">Gửi mã OTP</string>
+    <string name="title_verify_otp">Xác thực OTP</string>
+    <string name="desc_verify_otp">Nhập mã 6 chữ số được gửi tới </string>
+    <string name="label_resend_otp">Gửi lại mã</string>
+    <string name="label_otp_expire">Mã hết hạn sau: </string>
+    <string name="title_reset_password">Đặt lại mật khẩu</string>
+    <string name="hint_new_password">Mật khẩu mới</string>
+    <string name="hint_confirm_new_password">Xác nhận mật khẩu mới</string>
+    <string name="reset_password_success">Đặt lại mật khẩu thành công!</string>
+
+    <!-- ==================== BOTTOM NAV ==================== -->
+    <string name="nav_home">Trang chủ</string>
+    <string name="nav_map">Bản đồ</string>
+    <string name="nav_explore">Khám phá</string>
+    <string name="nav_booking">Đặt sân</string>
+    <string name="nav_account">Tài khoản</string>
+
+    <!-- ==================== HOME ==================== -->
+    <string name="title_home">Trang chủ</string>
+    <string name="greeting_morning">Chào buổi sáng, </string>
+    <string name="greeting_afternoon">Chào buổi chiều, </string>
+    <string name="greeting_evening">Chào buổi tối, </string>
+    <string name="label_find_venue">Tìm sân thể thao</string>
+    <string name="hint_search_venue">Tìm kiếm sân, môn thể thao\u2026</string>
+    <string name="label_nearby_venues">Sân gần bạn</string>
+    <string name="label_popular_venues">Sân phổ biến</string>
+    <string name="label_featured_venues">Sân nổi bật</string>
+    <string name="label_recent_booking">Đặt sân gần đây</string>
+    <string name="label_quick_book">Đặt nhanh</string>
+    <string name="label_promotion">Khuyến mãi</string>
+    <string name="label_no_venue">Không tìm thấy sân nào</string>
+    <string name="label_km_away">km</string>
+
+    <!-- ==================== THỂ THAO (SPORT) ==================== -->
+    <string name="sport_all">Tất cả</string>
+    <string name="sport_pickleball">Pickleball</string>
+    <string name="sport_badminton">Cầu lông</string>
+    <string name="sport_football">Bóng đá</string>
+    <string name="sport_tennis">Tennis</string>
+    <string name="sport_volleyball">Bóng chuyền</string>
+    <string name="sport_basketball">Bóng rổ</string>
+    <string name="sport_swimming">Bơi lội</string>
+    <string name="sport_gym">Gym</string>
+
+    <!-- ==================== VENUE LIST / SEARCH ==================== -->
+    <string name="title_search">Tìm kiếm</string>
+    <string name="title_venue_list">Danh sách sân</string>
+    <string name="label_result_count">%d kết quả</string>
+    <string name="label_sort_by">Sắp xếp theo</string>
+    <string name="sort_distance">Khoảng cách</string>
+    <string name="sort_price_asc">Giá: Thấp đến cao</string>
+    <string name="sort_price_desc">Giá: Cao đến thấp</string>
+    <string name="sort_rating">Đánh giá</string>
+    <string name="sort_popular">Phổ biến nhất</string>
+    <string name="label_filter">Bộ lọc</string>
+    <string name="filter_price_range">Khoảng giá</string>
+    <string name="filter_distance">Bán kính</string>
+    <string name="filter_rating">Đánh giá tối thiểu</string>
+    <string name="filter_amenities">Tiện ích</string>
+    <string name="filter_indoor">Trong nhà</string>
+    <string name="filter_outdoor">Ngoài trời</string>
+    <string name="filter_open_now">Đang mở cửa</string>
+    <string name="label_search_empty">Không tìm thấy kết quả nào\nThử từ khóa khác hoặc điều chỉnh bộ lọc</string>
+
+    <!-- ==================== VENUE DETAIL ==================== -->
+    <string name="title_venue_detail">Chi tiết sân</string>
+    <string name="label_about">Giới thiệu</string>
+    <string name="label_amenities">Tiện ích</string>
+    <string name="label_address">Địa chỉ</string>
+    <string name="label_phone">Điện thoại</string>
+    <string name="label_open_hours">Giờ mở cửa</string>
+    <string name="label_price_from">Từ </string>
+    <string name="label_price_unit">/giờ</string>
+    <string name="label_price_vnd">₫</string>
+    <string name="label_rating">đánh giá</string>
+    <string name="label_reviews">Nhận xét</string>
+    <string name="label_courts">Sân</string>
+    <string name="label_court_count">%d sân</string>
+    <string name="label_map_direction">Chỉ đường</string>
+    <string name="label_share">Chia sẻ</string>
+    <string name="label_favorite">Yêu thích</string>
+    <string name="label_call">Gọi điện</string>
+    <string name="amenity_parking">Bãi đỗ xe</string>
+    <string name="amenity_shower">Phòng tắm</string>
+    <string name="amenity_locker">Tủ đồ</string>
+    <string name="amenity_wifi">WiFi miễn phí</string>
+    <string name="amenity_cafeteria">Căn tin</string>
+    <string name="amenity_equipment">Cho thuê dụng cụ</string>
+    <string name="amenity_lighting">Hệ thống đèn</string>
+    <string name="amenity_ac">Điều hòa</string>
+
+    <!-- ==================== BOOKING ==================== -->
+    <string name="title_booking">Đặt sân</string>
+    <string name="title_select_date">Chọn ngày</string>
+    <string name="title_select_time">Chọn khung giờ</string>
+    <string name="title_select_court">Chọn sân</string>
+    <string name="title_booking_summary">Xác nhận đặt sân</string>
+    <string name="label_date">Ngày</string>
+    <string name="label_time">Giờ</string>
+    <string name="label_duration">Thời lượng</string>
+    <string name="label_court">Sân</string>
+    <string name="label_total_price">Tổng tiền</string>
+    <string name="label_subtotal">Tạm tính</string>
+    <string name="label_discount">Giảm giá</string>
+    <string name="label_coupon">Mã giảm giá</string>
+    <string name="hint_coupon">Nhập mã giảm giá</string>
+    <string name="btn_apply_coupon">Áp dụng</string>
+    <string name="label_payment_method">Phương thức thanh toán</string>
+    <string name="payment_momo">Ví MoMo</string>
+    <string name="payment_vnpay">VNPay</string>
+    <string name="payment_zalopay">ZaloPay</string>
+    <string name="payment_cash">Tiền mặt</string>
+    <string name="payment_bank_transfer">Chuyển khoản</string>
+    <string name="label_note">Ghi chú</string>
+    <string name="hint_note">Thêm ghi chú cho chủ sân (không bắt buộc)</string>
+    <string name="slot_available">Trống</string>
+    <string name="slot_booked">Đã đặt</string>
+    <string name="slot_locked">Khóa</string>
+    <string name="slot_event">Sự kiện</string>
+    <string name="slot_selected">Đã chọn</string>
+    <string name="label_legend">Chú thích</string>
+    <string name="booking_success">Đặt sân thành công!</string>
+    <string name="booking_failed">Đặt sân thất bại. Vui lòng thử lại.</string>
+    <string name="booking_confirm_msg">Xác nhận đặt sân %s lúc %s ngày %s?</string>
+    <string name="label_hour">giờ</string>
+    <string name="label_minutes">phút</string>
+
+    <!-- ==================== MY BOOKINGS ==================== -->
+    <string name="title_my_bookings">Lịch đặt sân của tôi</string>
+    <string name="tab_upcoming">Sắp tới</string>
+    <string name="tab_completed">Đã hoàn thành</string>
+    <string name="tab_cancelled">Đã hủy</string>
+    <string name="status_pending">Chờ xác nhận</string>
+    <string name="status_confirmed">Đã xác nhận</string>
+    <string name="status_completed">Hoàn thành</string>
+    <string name="status_cancelled">Đã hủy</string>
+    <string name="status_paid">Đã thanh toán</string>
+    <string name="status_unpaid">Chưa thanh toán</string>
+    <string name="btn_cancel_booking">Hủy đặt sân</string>
+    <string name="btn_rebook">Đặt lại</string>
+    <string name="btn_view_detail">Xem chi tiết</string>
+    <string name="label_booking_id">Mã đặt sân</string>
+    <string name="label_no_booking">Chưa có lịch đặt sân nào</string>
+    <string name="label_no_upcoming">Không có lịch sắp tới</string>
+    <string name="cancel_confirm_title">Xác nhận hủy đặt sân</string>
+    <string name="cancel_confirm_msg">Bạn có chắc muốn hủy đặt sân này không?</string>
+    <string name="cancel_success">Hủy đặt sân thành công</string>
+    <string name="cancel_failed">Không thể hủy. Vui lòng thử lại.</string>
+
+    <!-- ==================== REVIEW ==================== -->
+    <string name="title_write_review">Viết đánh giá</string>
+    <string name="label_your_rating">Đánh giá của bạn</string>
+    <string name="hint_review">Chia sẻ trải nghiệm của bạn về sân này\u2026</string>
+    <string name="btn_submit_review">Gửi đánh giá</string>
+    <string name="review_success">Cảm ơn đánh giá của bạn!</string>
+    <string name="rating_1">Rất tệ</string>
+    <string name="rating_2">Tệ</string>
+    <string name="rating_3">Bình thường</string>
+    <string name="rating_4">Tốt</string>
+    <string name="rating_5">Xuất sắc</string>
+
+    <!-- ==================== MAP ==================== -->
+    <string name="title_map">Bản đồ sân</string>
+    <string name="label_my_location">Vị trí của tôi</string>
+    <string name="label_nearby">Sân gần đây</string>
+    <string name="label_enable_location">Cho phép truy cập vị trí để tìm sân gần bạn</string>
+    <string name="btn_enable_location">Bật vị trí</string>
+
+    <!-- ==================== EXPLORE ==================== -->
+    <string name="title_explore">Khám phá</string>
+    <string name="label_trending">Xu hướng</string>
+    <string name="label_new_venues">Sân mới</string>
+    <string name="label_top_rated">Đánh giá cao</string>
+    <string name="label_best_price">Giá tốt</string>
+    <string name="label_events">Sự kiện thể thao</string>
+
+    <!-- ==================== ACCOUNT / PROFILE ==================== -->
+    <string name="title_account">Tài khoản</string>
+    <string name="title_profile">Hồ sơ cá nhân</string>
+    <string name="title_edit_profile">Chỉnh sửa hồ sơ</string>
+    <string name="label_my_profile">Hồ sơ của tôi</string>
+    <string name="label_my_favorites">Sân yêu thích</string>
+    <string name="label_my_reviews">Đánh giá của tôi</string>
+    <string name="label_notifications">Thông báo</string>
+    <string name="label_settings">Cài đặt</string>
+    <string name="label_help_support">Hỗ trợ &amp; Trợ giúp</string>
+    <string name="label_about_app">Về ứng dụng</string>
+    <string name="label_version">Phiên bản</string>
+    <string name="label_change_password">Đổi mật khẩu</string>
+    <string name="label_change_avatar">Thay ảnh đại diện</string>
+    <string name="label_wallet">Ví của tôi</string>
+    <string name="label_balance">Số dư</string>
+    <string name="label_top_up">Nạp tiền</string>
+    <string name="label_transaction_history">Lịch sử giao dịch</string>
+    <string name="label_referral">Giới thiệu bạn bè</string>
+    <string name="label_referral_code">Mã giới thiệu</string>
+    <string name="update_profile_success">Cập nhật hồ sơ thành công!</string>
+    <string name="change_password_success">Đổi mật khẩu thành công!</string>
+    <string name="logout_confirm_title">Đăng xuất</string>
+    <string name="logout_confirm_msg">Bạn có chắc muốn đăng xuất không?</string>
+
+    <!-- ==================== NOTIFICATIONS ==================== -->
+    <string name="title_notifications">Thông báo</string>
+    <string name="label_no_notification">Không có thông báo nào</string>
+    <string name="label_mark_all_read">Đánh dấu tất cả đã đọc</string>
+    <string name="notif_booking_confirmed">Đặt sân đã được xác nhận</string>
+    <string name="notif_booking_reminder">Nhắc nhở: Bạn có lịch đặt sân sau %d giờ</string>
+    <string name="notif_booking_cancelled">Đặt sân đã bị hủy</string>
+    <string name="notif_promotion">Ưu đãi dành riêng cho bạn!</string>
+
+    <!-- ==================== SETTINGS ==================== -->
+    <string name="title_settings">Cài đặt</string>
+    <string name="setting_language">Ngôn ngữ</string>
+    <string name="setting_language_vi">Tiếng Việt</string>
+    <string name="setting_language_en">English</string>
+    <string name="setting_dark_mode">Chế độ tối</string>
+    <string name="setting_notification_push">Thông báo đẩy</string>
+    <string name="setting_notification_email">Thông báo email</string>
+    <string name="setting_notification_sms">Thông báo SMS</string>
+    <string name="setting_location">Dịch vụ vị trí</string>
+
+    <!-- ==================== ERROR / VALIDATION ==================== -->
+    <string name="error_network">Không có kết nối mạng. Vui lòng kiểm tra lại.</string>
+    <string name="error_server">Lỗi máy chủ. Vui lòng thử lại sau.</string>
+    <string name="error_unknown">Đã xảy ra lỗi không xác định.</string>
+    <string name="error_timeout">Hết thời gian chờ. Vui lòng thử lại.</string>
+    <string name="error_empty_field">Vui lòng điền đầy đủ thông tin.</string>
+    <string name="error_invalid_phone">Số điện thoại không hợp lệ.</string>
+    <string name="error_invalid_email">Email không hợp lệ.</string>
+    <string name="error_password_short">Mật khẩu phải có ít nhất 6 ký tự.</string>
+    <string name="error_password_mismatch">Mật khẩu xác nhận không khớp.</string>
+    <string name="error_invalid_otp">Mã OTP không chính xác.</string>
+    <string name="error_otp_expired">Mã OTP đã hết hạn. Vui lòng gửi lại.</string>
+    <string name="error_no_slot_selected">Vui lòng chọn ít nhất một khung giờ.</string>
+    <string name="error_payment_failed">Thanh toán thất bại. Vui lòng thử lại.</string>
+
+    <!-- ==================== LOADING / EMPTY STATES ==================== -->
+    <string name="loading">Đang tải\u2026</string>
+    <string name="loading_venues">Đang tải danh sách sân\u2026</string>
+    <string name="loading_booking">Đang xử lý đặt sân\u2026</string>
+    <string name="loading_payment">Đang xử lý thanh toán\u2026</string>
+    <string name="empty_favorites">Bạn chưa có sân yêu thích nào\nHãy khám phá và thêm vào yêu thích!</string>
+    <string name="empty_reviews">Chưa có đánh giá nào</string>
+
+    <!-- ==================== CONTENT DESCRIPTIONS (a11y) ==================== -->
+    <string name="cd_back_button">Nút quay lại</string>
+    <string name="cd_search_icon">Tìm kiếm</string>
+    <string name="cd_venue_image">Hình ảnh sân</string>
+    <string name="cd_avatar">Ảnh đại diện</string>
+    <string name="cd_star_rating">Đánh giá sao</string>
+    <string name="cd_location_icon">Biểu tượng vị trí</string>
+    <string name="cd_favorite_icon">Yêu thích</string>
+
+</resources>

@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- ================================================================
+         SPACING
+    ================================================================ -->
+    <dimen name="spacing_xxs">2dp</dimen>
+    <dimen name="spacing_xs">4dp</dimen>
+    <dimen name="spacing_sm">8dp</dimen>
+    <dimen name="spacing_md">12dp</dimen>
+    <dimen name="spacing_base">16dp</dimen>
+    <dimen name="spacing_lg">20dp</dimen>
+    <dimen name="spacing_xl">24dp</dimen>
+    <dimen name="spacing_xxl">32dp</dimen>
+    <dimen name="spacing_xxxl">48dp</dimen>
+
+    <!-- ================================================================
+         CORNER RADIUS
+    ================================================================ -->
+    <dimen name="radius_xs">4dp</dimen>
+    <dimen name="radius_sm">8dp</dimen>
+    <dimen name="radius_md">12dp</dimen>
+    <dimen name="radius_base">14dp</dimen>
+    <dimen name="radius_lg">16dp</dimen>
+    <dimen name="radius_xl">20dp</dimen>
+    <dimen name="radius_xxl">24dp</dimen>
+    <dimen name="radius_circle">50dp</dimen>
+
+    <!-- ================================================================
+         TEXT SIZES
+    ================================================================ -->
+    <dimen name="text_xxs">10sp</dimen>
+    <dimen name="text_xs">11sp</dimen>
+    <dimen name="text_sm">12sp</dimen>
+    <dimen name="text_caption">13sp</dimen>
+    <dimen name="text_body">14sp</dimen>
+    <dimen name="text_md">15sp</dimen>
+    <dimen name="text_base">16sp</dimen>
+    <dimen name="text_lg">18sp</dimen>
+    <dimen name="text_xl">20sp</dimen>
+    <dimen name="text_xxl">24sp</dimen>
+    <dimen name="text_display">28sp</dimen>
+    <dimen name="text_hero">32sp</dimen>
+
+    <!-- ================================================================
+         COMPONENT SIZES
+    ================================================================ -->
+    <!-- Buttons -->
+    <dimen name="btn_height">48dp</dimen>
+    <dimen name="btn_height_sm">36dp</dimen>
+    <dimen name="btn_height_lg">56dp</dimen>
+    <dimen name="btn_icon_size">20dp</dimen>
+
+    <!-- Input fields -->
+    <dimen name="input_height">52dp</dimen>
+    <dimen name="input_padding_horizontal">16dp</dimen>
+    <dimen name="input_padding_vertical">14dp</dimen>
+
+    <!-- Icons -->
+    <dimen name="icon_xs">16dp</dimen>
+    <dimen name="icon_sm">20dp</dimen>
+    <dimen name="icon_md">24dp</dimen>
+    <dimen name="icon_lg">32dp</dimen>
+    <dimen name="icon_xl">48dp</dimen>
+    <dimen name="icon_xxl">64dp</dimen>
+
+    <!-- Avatar -->
+    <dimen name="avatar_sm">32dp</dimen>
+    <dimen name="avatar_md">48dp</dimen>
+    <dimen name="avatar_lg">80dp</dimen>
+    <dimen name="avatar_xl">120dp</dimen>
+
+    <!-- Cards -->
+    <dimen name="card_venue_height">200dp</dimen>
+    <dimen name="card_venue_image_height">160dp</dimen>
+    <dimen name="card_elevation">4dp</dimen>
+    <dimen name="card_elevation_lg">8dp</dimen>
+    <dimen name="card_padding">16dp</dimen>
+
+    <!-- Bottom navigation -->
+    <dimen name="bottom_nav_height">64dp</dimen>
+
+    <!-- Toolbar -->
+    <dimen name="toolbar_height">56dp</dimen>
+    <dimen name="toolbar_height_expanded">200dp</dimen>
+
+    <!-- Header gradient -->
+    <dimen name="header_height">180dp</dimen>
+    <dimen name="header_corner_bottom">28dp</dimen>
+
+    <!-- Search bar -->
+    <dimen name="search_bar_height">48dp</dimen>
+    <dimen name="search_bar_radius">24dp</dimen>
+
+    <!-- Chips -->
+    <dimen name="chip_height">36dp</dimen>
+    <dimen name="chip_radius">20dp</dimen>
+    <dimen name="chip_padding_horizontal">12dp</dimen>
+
+    <!-- Booking slot -->
+    <dimen name="slot_width">72dp</dimen>
+    <dimen name="slot_height">40dp</dimen>
+    <dimen name="slot_radius">4dp</dimen>
+    <dimen name="slot_margin">4dp</dimen>
+
+    <!-- Rating badge -->
+    <dimen name="rating_badge_radius">12dp</dimen>
+    <dimen name="star_size">16dp</dimen>
+
+    <!-- Divider -->
+    <dimen name="divider_height">1dp</dimen>
+    <dimen name="divider_thick">8dp</dimen>
+
+    <!-- Page padding -->
+    <dimen name="page_padding_horizontal">16dp</dimen>
+    <dimen name="page_padding_vertical">16dp</dimen>
+
+    <!-- Map -->
+    <dimen name="map_marker_size">40dp</dimen>
+    <dimen name="map_sheet_peek_height">120dp</dimen>
+
+    <!-- Image aspect ratios (used as height) -->
+    <dimen name="banner_height">180dp</dimen>
+    <dimen name="promo_card_height">140dp</dimen>
+
+    <!-- Shadow -->
+    <dimen name="shadow_elevation">2dp</dimen>
+    <dimen name="shadow_elevation_md">4dp</dimen>
+    <dimen name="shadow_elevation_lg">8dp</dimen>
+
+    <!-- Stroke -->
+    <dimen name="stroke_thin">1dp</dimen>
+    <dimen name="stroke_medium">1.5dp</dimen>
+    <dimen name="stroke_thick">2dp</dimen>
+
+</resources>

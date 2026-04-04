@@ -1,0 +1,59 @@
+# Java / Spring Boot
+*.class
+*.jar
+*.war
+*.ear
+target/
+build/
+.gradle/
+!gradle/wrapper/gradle-wrapper.jar
+
+# Android
+*.apk
+*.ap_
+*.dex
+local.properties
+.cxx/
+app/build/
+
+# IDE
+.idea/
+*.iml
+*.iws
+*.ipr
+.vscode/
+.settings/
+.project
+.classpath
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Environment
+.env
+.env.*
+*.pem
+*.key
+credentials.json
+
+# Logs
+*.log
+logs/
+
+# Temp
+*.tmp
+.cache/
+__pycache__/
+node_modules/
+
+# Text / Script / Docs
+*.txt
+*.sh
+*.md
+
+# Keep
+!taikhoan.txt

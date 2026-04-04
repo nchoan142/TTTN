@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+
+    <!-- Shuttlecock cork (bottom oval) -->
+    <path
+        android:fillColor="#FF2E7D32"
+        android:pathData="M12,18C11.172,18 10.5,18.672 10.5,19.5C10.5,20.328 11.172,21 12,21C12.828,21 13.5,20.328 13.5,19.5C13.5,18.672 12.828,18 12,18z" />
+
+    <!-- Shuttlecock stem -->
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#FF2E7D32"
+        android:strokeWidth="1.5"
+        android:strokeLineCap="round"
+        android:pathData="M12,18L12,12" />
+
+    <!-- Feather lines radiating from top -->
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#FF2E7D32"
+        android:strokeWidth="1.5"
+        android:strokeLineCap="round"
+        android:pathData="M12,12L7,5" />
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#FF2E7D32"
+        android:strokeWidth="1.5"
+        android:strokeLineCap="round"
+        android:pathData="M12,12L9,4" />
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#FF2E7D32"
+        android:strokeWidth="1.5"
+        android:strokeLineCap="round"
+        android:pathData="M12,12L12,3" />
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#FF2E7D32"
+        android:strokeWidth="1.5"
+        android:strokeLineCap="round"
+        android:pathData="M12,12L15,4" />
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#FF2E7D32"
+        android:strokeWidth="1.5"
+        android:strokeLineCap="round"
+        android:pathData="M12,12L17,5" />
+
+    <!-- Arc connecting feather tips -->
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#FF2E7D32"
+        android:strokeWidth="1.5"
+        android:pathData="M7,5C8.5,3.5 10,3 12,3C14,3 15.5,3.5 17,5" />
+
+</vector>

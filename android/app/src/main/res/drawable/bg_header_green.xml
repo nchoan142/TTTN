@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+
+    <!--
+        Gradient: 135 degrees (top-left to bottom-right)
+        from #1B5E20 (Dark Green) to #4CAF50 (Light Green)
+        Android gradient angle: 135 deg = startColor top-left, endColor bottom-right
+        Use angle="135" — Android rounds to nearest 45-degree multiple.
+    -->
+    <gradient
+        android:angle="135"
+        android:startColor="#FF1B5E20"
+        android:centerColor="#FF2E7D32"
+        android:endColor="#FF4CAF50"
+        android:type="linear" />
+
+    <!-- Only bottom corners are rounded (28dp) -->
+    <corners
+        android:bottomLeftRadius="28dp"
+        android:bottomRightRadius="28dp"
+        android:topLeftRadius="0dp"
+        android:topRightRadius="0dp" />
+
+</shape>

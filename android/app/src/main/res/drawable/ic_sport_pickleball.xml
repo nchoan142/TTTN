@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+
+    <!-- Racket head (oval) -->
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#FF2E7D32"
+        android:strokeWidth="2"
+        android:pathData="M8,4C4.686,4 2,6.686 2,10C2,13.314 4.686,16 8,16C11.314,16 14,13.314 14,10C14,6.686 11.314,4 8,4z" />
+
+    <!-- Racket handle -->
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#FF2E7D32"
+        android:strokeWidth="2.5"
+        android:strokeLineCap="round"
+        android:pathData="M14,14L21,21" />
+
+    <!-- Cross strings on racket -->
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#FF2E7D32"
+        android:strokeWidth="1"
+        android:pathData="M8,4L8,16" />
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#FF2E7D32"
+        android:strokeWidth="1"
+        android:pathData="M2,10L14,10" />
+
+    <!-- Small ball -->
+    <path
+        android:fillColor="#FF2E7D32"
+        android:pathData="M20,4m-2,0a2,2 0,1 1,4 0a2,2 0,1 1,-4 0" />
+
+</vector>

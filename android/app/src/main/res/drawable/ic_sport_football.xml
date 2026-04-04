@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+
+    <!-- Ball outer circle -->
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#FF2E7D32"
+        android:strokeWidth="2"
+        android:pathData="M12,12m-9,0a9,9 0,1 1,18 0a9,9 0,1 1,-18 0" />
+
+    <!-- Central pentagon -->
+    <path
+        android:fillColor="#FF2E7D32"
+        android:pathData="M12,8.5L14.5,10.3L13.6,13.2L10.4,13.2L9.5,10.3z" />
+
+    <!-- Panel seam lines -->
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#FF2E7D32"
+        android:strokeWidth="1.2"
+        android:strokeLineCap="round"
+        android:pathData="M12,3L12,8.5" />
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#FF2E7D32"
+        android:strokeWidth="1.2"
+        android:strokeLineCap="round"
+        android:pathData="M3.8,7.5L9.5,10.3" />
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#FF2E7D32"
+        android:strokeWidth="1.2"
+        android:strokeLineCap="round"
+        android:pathData="M20.2,7.5L14.5,10.3" />
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#FF2E7D32"
+        android:strokeWidth="1.2"
+        android:strokeLineCap="round"
+        android:pathData="M6,19.5L10.4,13.2" />
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#FF2E7D32"
+        android:strokeWidth="1.2"
+        android:strokeLineCap="round"
+        android:pathData="M18,19.5L13.6,13.2" />
+
+</vector>
