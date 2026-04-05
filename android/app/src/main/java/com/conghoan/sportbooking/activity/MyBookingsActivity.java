@@ -208,25 +208,36 @@ public class MyBookingsActivity extends AppCompatActivity {
     private BookingItem mapToBookingItem(Map<String, Object> item) {
         try {
             long id = getIdFromMap(item);
-            String venueName = getStringFromMap(item, "venueName");
-            String courtName = getStringFromMap(item, "courtName");
-            String date = getStringFromMap(item, "date");
+            // Backend trả về: bookingDate, startTime, endTime, status, totalPrice
+            // court là nested object với name, venue cũng nested trong court
+            String date = getStringFromMap(item, "bookingDate");
+            if (date.isEmpty()) date = getStringFromMap(item, "date");
             String startTime = getStringFromMap(item, "startTime");
             String endTime = getStringFromMap(item, "endTime");
             String status = getStringFromMap(item, "status");
             double totalPrice = getDoubleFromMap(item, "totalPrice");
 
-            // Hỗ trợ cả trường hợp venue/court nằm trong object lồng nhau
+            // Extract court name và venue name từ nested objects
+            String courtName = getStringFromMap(item, "courtName");
+            String venueName = getStringFromMap(item, "venueName");
+
+            Object courtObj = item.get("court");
+            if (courtObj instanceof Map) {
+                Map<String, Object> courtMap = (Map<String, Object>) courtObj;
+                if (courtName.isEmpty()) {
+                    courtName = getStringFromMap(courtMap, "name");
+                }
+                // venue nằm trong court (nếu không bị @JsonIgnore)
+                Object venueObj = courtMap.get("venue");
+                if (venueObj instanceof Map && venueName.isEmpty()) {
+                    venueName = getStringFromMap((Map<String, Object>) venueObj, "name");
+                }
+            }
+            // Fallback: venue có thể ở top level
             if (venueName.isEmpty()) {
                 Object venueObj = item.get("venue");
                 if (venueObj instanceof Map) {
                     venueName = getStringFromMap((Map<String, Object>) venueObj, "name");
-                }
-            }
-            if (courtName.isEmpty()) {
-                Object courtObj = item.get("court");
-                if (courtObj instanceof Map) {
-                    courtName = getStringFromMap((Map<String, Object>) courtObj, "name");
                 }
             }
 
