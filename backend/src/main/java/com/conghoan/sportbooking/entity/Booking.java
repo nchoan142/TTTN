@@ -16,16 +16,16 @@ import java.time.LocalDateTime;
 public class Booking {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // Primary key
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    @JsonIgnoreProperties({"password", "createdAt"})
+    @JoinColumn(name = "user_id", nullable = false) // Foreign key tới bảng users
+    @JsonIgnoreProperties({"password", "createdAt"}) // ẩn field password, createdAt khi chuyển sang JSON
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "court_id", nullable = false)
+    @JoinColumn(name = "court_id", nullable = false) // Foreign key tới bảng courts
     @JsonIgnoreProperties({"venue"})
     private Court court;
 
@@ -47,6 +47,7 @@ public class Booking {
 
     private LocalDateTime createdAt;
 
+    // Lưu thời gian tại thời điểm tạo booking vào database
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
