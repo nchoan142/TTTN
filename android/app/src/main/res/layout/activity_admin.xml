@@ -244,7 +244,7 @@
             android:layout_weight="1"
             android:text="Người dùng"
             android:textAllCaps="false"
-            android:textSize="12sp"
+            android:textSize="9sp"
             app:backgroundTint="#2E7D32"
             app:cornerRadius="10dp" />
 
@@ -257,7 +257,7 @@
             android:layout_weight="1"
             android:text="Sân"
             android:textAllCaps="false"
-            android:textSize="12sp"
+            android:textSize="9sp"
             app:backgroundTint="#E0E0E0"
             app:cornerRadius="10dp"
             android:textColor="#757575" />
@@ -271,7 +271,7 @@
             android:layout_weight="1"
             android:text="Lịch đặt"
             android:textAllCaps="false"
-            android:textSize="12sp"
+            android:textSize="9sp"
             app:backgroundTint="#E0E0E0"
             app:cornerRadius="10dp"
             android:textColor="#757575" />
@@ -284,7 +284,7 @@
             android:layout_weight="1"
             android:text="Danh mục"
             android:textAllCaps="false"
-            android:textSize="12sp"
+            android:textSize="9sp"
             app:backgroundTint="#E0E0E0"
             app:cornerRadius="10dp"
             android:textColor="#757575" />
