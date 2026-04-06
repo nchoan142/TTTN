@@ -2,6 +2,7 @@ package com.conghoan.sportbooking.api;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
@@ -30,6 +31,7 @@ public class ApiClient {
     public static void loadTokenFromPrefs(Context context) {
         SharedPreferences prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
         authToken = prefs.getString(KEY_TOKEN, null);
+        Log.d("ApiClient", "Loaded token from prefs: " + authToken);
     }
 
     public static Retrofit getClient() {
