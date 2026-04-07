@@ -26,9 +26,11 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
+        // Lấy chỗi header có tên là Authorization
         String header = request.getHeader("Authorization");
 
         if (header != null && header.startsWith("Bearer ")) {
+            // Cắt bỏ 7 ký tự "Bearer " của header để lấy ra token nguyên bản
             String token = header.substring(7);
             if (jwtUtil.validateToken(token)) {
                 String email = jwtUtil.getEmailFromToken(token);
@@ -36,7 +38,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 if (user != null) {
                     var auth = new UsernamePasswordAuthenticationToken(
                             user, null,
-                            List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()))
+                            List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole().name())) // gán role cho user
                     );
                     SecurityContextHolder.getContext().setAuthentication(auth);
                 }

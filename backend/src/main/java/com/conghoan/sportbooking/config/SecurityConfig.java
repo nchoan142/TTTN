@@ -20,6 +20,7 @@ public class SecurityConfig {
 
     private final JwtAuthFilter jwtAuthFilter;
 
+    // Mã hóa password của user trước khi lưu vào database
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();

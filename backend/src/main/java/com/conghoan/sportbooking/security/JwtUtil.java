@@ -22,19 +22,21 @@ public class JwtUtil {
         return Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
     }
 
+    // Tạo ra token chứa Email và userId
     public String generateToken(String email, Long userId) {
         return Jwts.builder()
-                .subject(email)
-                .claim("userId", userId)
-                .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + expiration))
+                .subject(email) // tạo token cho email nào
+                .claim("userId", userId) // truyền thêm userId qua token
+                .issuedAt(new Date()) // thời điểm tạo token
+                .expiration(new Date(System.currentTimeMillis() + expiration)) // thời gian hết hạn của token
                 .signWith(getSigningKey())
                 .compact();
     }
 
+    // lấy email từ token
     public String getEmailFromToken(String token) {
         return Jwts.parser()
-                .verifyWith(getSigningKey())
+                .verifyWith(getSigningKey()) // xác minh key
                 .build()
                 .parseSignedClaims(token)
                 .getPayload()

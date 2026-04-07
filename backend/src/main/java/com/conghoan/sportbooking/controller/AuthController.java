@@ -75,6 +75,7 @@ public class AuthController {
         }
     }
 
+    // API update dữ liệu
     @PutMapping("/profile")
     public ResponseEntity<ApiResponse<User>> updateProfile(
             @AuthenticationPrincipal User currentUser,

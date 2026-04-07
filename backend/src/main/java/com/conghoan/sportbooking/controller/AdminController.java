@@ -29,6 +29,7 @@ public class AdminController {
     private final VenueRepository venueRepository;
     private final BookingRepository bookingRepository;
     private final SportCategoryRepository categoryRepository;
+    private final CourtRepository courtRepository;
     private final CloudinaryService cloudinaryService;
 
     @Autowired
@@ -109,6 +110,129 @@ public class AdminController {
     @GetMapping("/venues")
     public ResponseEntity<ApiResponse<List<Venue>>> getAllVenues() {
         return ResponseEntity.ok(ApiResponse.ok(venueRepository.findAll()));
+    }
+
+    @PostMapping("/venues")
+    public ResponseEntity<ApiResponse<Venue>> createVenue(@RequestBody Map<String, Object> body) {
+        try {
+            String name = (String) body.get("name");
+            if (name == null || name.trim().isEmpty()) {
+                return ResponseEntity.badRequest().body(ApiResponse.error("Tên sân không được để trống"));
+            }
+
+            Venue.VenueBuilder builder = Venue.builder()
+                    .name(name)
+                    .address((String) body.get("address"))
+                    .phone((String) body.get("phone"))
+                    .imageUrl((String) body.get("imageUrl"))
+                    .rating(5.0)
+                    .ratingCount(0)
+                    .active(true);
+
+            // Open/close time (HH:mm)
+            String openTime = (String) body.get("openTime");
+            if (openTime != null && !openTime.isEmpty()) {
+                builder.openTime(java.time.LocalTime.parse(openTime));
+            }
+            String closeTime = (String) body.get("closeTime");
+            if (closeTime != null && !closeTime.isEmpty()) {
+                builder.closeTime(java.time.LocalTime.parse(closeTime));
+            }
+
+            // Price per slot
+            Object priceObj = body.get("pricePerSlot");
+            if (priceObj instanceof Number) {
+                builder.pricePerSlot(((Number) priceObj).doubleValue());
+            }
+
+            // Category
+            Object categoryIdObj = body.get("categoryId");
+            if (categoryIdObj instanceof Number) {
+                Long categoryId = ((Number) categoryIdObj).longValue();
+                SportCategory category = categoryRepository.findById(categoryId)
+                        .orElseThrow(() -> new RuntimeException("Danh mục không tồn tại"));
+                builder.category(category);
+            }
+
+            // Owner mặc định: user đầu tiên có role OWNER
+            User owner = userRepository.findAll().stream()
+                    .filter(u -> u.getRole() == User.Role.OWNER)
+                    .findFirst()
+                    .orElse(null);
+            if (owner != null) {
+                builder.owner(owner);
+            }
+
+            Venue venue = venueRepository.save(builder.build());
+
+            // Tạo sân con mặc định nếu có courtNames
+            Object courtNamesObj = body.get("courtNames");
+            if (courtNamesObj instanceof List) {
+                List<?> courtNames = (List<?>) courtNamesObj;
+                for (Object cn : courtNames) {
+                    if (cn != null && !cn.toString().trim().isEmpty()) {
+                        Court court = Court.builder()
+                                .name(cn.toString())
+                                .venue(venue)
+                                .active(true)
+                                .build();
+                        courtRepository.save(court);
+                    }
+                }
+            }
+
+            return ResponseEntity.ok(ApiResponse.ok("Tạo sân thành công", venue));
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(ApiResponse.error(e.getMessage()));
+        }
+    }
+
+    @PutMapping("/venues/{id}")
+    public ResponseEntity<ApiResponse<Venue>> updateVenue(
+            @PathVariable Long id,
+            @RequestBody Map<String, Object> body) {
+        try {
+            Venue venue = venueRepository.findById(id)
+                    .orElseThrow(() -> new RuntimeException("Không tìm thấy sân"));
+
+            if (body.containsKey("name")) venue.setName((String) body.get("name"));
+            if (body.containsKey("address")) venue.setAddress((String) body.get("address"));
+            if (body.containsKey("phone")) venue.setPhone((String) body.get("phone"));
+            if (body.containsKey("imageUrl")) venue.setImageUrl((String) body.get("imageUrl"));
+
+            String openTime = (String) body.get("openTime");
+            if (openTime != null && !openTime.isEmpty()) venue.setOpenTime(java.time.LocalTime.parse(openTime));
+            String closeTime = (String) body.get("closeTime");
+            if (closeTime != null && !closeTime.isEmpty()) venue.setCloseTime(java.time.LocalTime.parse(closeTime));
+
+            Object priceObj = body.get("pricePerSlot");
+            if (priceObj instanceof Number) venue.setPricePerSlot(((Number) priceObj).doubleValue());
+
+            Object categoryIdObj = body.get("categoryId");
+            if (categoryIdObj instanceof Number) {
+                Long categoryId = ((Number) categoryIdObj).longValue();
+                SportCategory category = categoryRepository.findById(categoryId)
+                        .orElseThrow(() -> new RuntimeException("Danh mục không tồn tại"));
+                venue.setCategory(category);
+            }
+
+            venueRepository.save(venue);
+            return ResponseEntity.ok(ApiResponse.ok("Cập nhật sân thành công", venue));
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(ApiResponse.error(e.getMessage()));
+        }
+    }
+
+    @DeleteMapping("/venues/{id}")
+    public ResponseEntity<ApiResponse<Void>> deleteVenue(@PathVariable Long id) {
+        try {
+            Venue venue = venueRepository.findById(id)
+                    .orElseThrow(() -> new RuntimeException("Không tìm thấy sân"));
+            venueRepository.delete(venue);
+            return ResponseEntity.ok(ApiResponse.ok("Xoá sân thành công", null));
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(ApiResponse.error(e.getMessage()));
+        }
     }
 
     @PutMapping("/venues/{id}/image")
