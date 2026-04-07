@@ -46,4 +46,22 @@ public class AuthService {
         String token = jwtUtil.generateToken(user.getEmail(), user.getId());
         return new AuthResponse(token, user.getId(), user.getFullName(), user.getEmail(), user.getRole().name());
     }
+
+    // Xử lí update profile
+    public User updateProfile(Long userId, ProfileUpdateRequest request) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng"));
+
+        if (!user.getEmail().equals(request.getEmail())) {
+            if (userRepository.existsByEmail(request.getEmail())) {
+                throw new RuntimeException("Email này đã được sử dụng bởi tài khoản khác");
+            }
+        }
+
+        user.setFullName(request.getFullName());
+        user.setEmail(request.getEmail());
+        user.setPhone(request.getPhone());
+
+        return userRepository.save(user);
+    }
 }
