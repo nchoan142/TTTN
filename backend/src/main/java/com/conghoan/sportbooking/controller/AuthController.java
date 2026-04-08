@@ -7,7 +7,6 @@ import com.conghoan.sportbooking.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
@@ -46,9 +45,12 @@ public class AuthController {
     @PutMapping("/change-password")
     public ResponseEntity<ApiResponse<String>> changePassword(
             @RequestBody Map<String, String> body,
-            Authentication authentication) {
+            @AuthenticationPrincipal User principal) {
         try {
-            String email = authentication.getName();
+            if (principal == null) {
+                return ResponseEntity.status(401).body(ApiResponse.error("Chưa đăng nhập"));
+            }
+
             String oldPassword = body.get("oldPassword");
             String newPassword = body.get("newPassword");
 
@@ -59,7 +61,8 @@ public class AuthController {
                 return ResponseEntity.badRequest().body(ApiResponse.error("Mật khẩu mới phải có ít nhất 6 ký tự"));
             }
 
-            User user = userRepository.findByEmail(email)
+            // Load fresh user từ DB (principal có thể bị stale)
+            User user = userRepository.findById(principal.getId())
                     .orElseThrow(() -> new RuntimeException("Không tìm thấy tài khoản"));
 
             if (!passwordEncoder.matches(oldPassword, user.getPassword())) {

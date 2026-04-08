@@ -20,6 +20,13 @@ public interface ApiService {
     @POST("auth/register")
     Call<Map<String, Object>> register(@Body Map<String, String> body);
 
+    @PUT("auth/profile")
+    Call<Map<String, Object>> updateProfile(@Body Map<String, String> body);
+
+    // Change password
+    @PUT("auth/change-password")
+    Call<Map<String, Object>> changePassword(@Body Map<String, String> body);
+
     // Categories
     @GET("categories")
     Call<Map<String, Object>> getCategories();
@@ -59,11 +66,7 @@ public interface ApiService {
 
     @POST("reviews")
     Call<Map<String, Object>> createReview(@Body Map<String, Object> body);
-
-    // Change password
-    @PUT("auth/change-password")
-    Call<Map<String, Object>> changePassword(@Body Map<String, String> body);
-
+    
     // Admin
     @GET("admin/stats")
     Call<Map<String, Object>> getAdminStats();
@@ -76,6 +79,15 @@ public interface ApiService {
 
     @GET("admin/venues")
     Call<Map<String, Object>> getAdminVenues();
+
+    @POST("admin/venues")
+    Call<Map<String, Object>> createVenue(@Body Map<String, Object> body);
+
+    @PUT("admin/venues/{id}")
+    Call<Map<String, Object>> updateVenue(@Path("id") Long id, @Body Map<String, Object> body);
+
+    @DELETE("admin/venues/{id}")
+    Call<Map<String, Object>> deleteVenue(@Path("id") Long id);
 
     @PUT("admin/venues/{id}/toggle")
     Call<Map<String, Object>> toggleVenue(@Path("id") Long id);

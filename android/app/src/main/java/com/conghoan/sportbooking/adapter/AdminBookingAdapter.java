@@ -28,11 +28,16 @@ public class AdminBookingAdapter extends RecyclerView.Adapter<AdminBookingAdapte
         void onBookingClick(Map<String, Object> booking, int position);
     }
 
+    public interface OnBookingCancelListener {
+        void onCancelClick(Map<String, Object> booking, int position);
+    }
+
     private Context context;
     private List<Map<String, Object>> bookingList;
     private final NumberFormat currencyFormat = NumberFormat.getInstance(new Locale("vi", "VN"));
     private OnBookingConfirmListener confirmListener;
     private OnBookingClickListener clickListener;
+    private OnBookingCancelListener cancelListener;
 
     public AdminBookingAdapter(Context context, List<Map<String, Object>> bookingList) {
         this.context = context;
@@ -45,6 +50,10 @@ public class AdminBookingAdapter extends RecyclerView.Adapter<AdminBookingAdapte
 
     public void setClickListener(OnBookingClickListener listener) {
         this.clickListener = listener;
+    }
+
+    public void setCancelListener(OnBookingCancelListener listener) {
+        this.cancelListener = listener;
     }
 
     @NonNull
@@ -110,11 +119,23 @@ public class AdminBookingAdapter extends RecyclerView.Adapter<AdminBookingAdapte
             holder.btnConfirm.setVisibility(View.VISIBLE);
             holder.btnConfirm.setOnClickListener(v -> {
                 if (confirmListener != null) {
-                    confirmListener.onConfirmClick(booking, position);
+                    confirmListener.onConfirmClick(booking, holder.getAdapterPosition());
                 }
             });
         } else {
             holder.btnConfirm.setVisibility(View.GONE);
+        }
+
+        // Show cancel button for PENDING & CONFIRMED bookings (admin có quyền huỷ)
+        if ("PENDING".equals(status) || "CONFIRMED".equals(status)) {
+            holder.btnCancel.setVisibility(View.VISIBLE);
+            holder.btnCancel.setOnClickListener(v -> {
+                if (cancelListener != null) {
+                    cancelListener.onCancelClick(booking, holder.getAdapterPosition());
+                }
+            });
+        } else {
+            holder.btnCancel.setVisibility(View.GONE);
         }
 
         // Click to show detail
@@ -189,7 +210,7 @@ public class AdminBookingAdapter extends RecyclerView.Adapter<AdminBookingAdapte
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView tvUser, tvCourt, tvDate, tvTime, tvPrice, tvStatus;
-        MaterialButton btnConfirm;
+        MaterialButton btnConfirm, btnCancel;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -200,6 +221,7 @@ public class AdminBookingAdapter extends RecyclerView.Adapter<AdminBookingAdapte
             tvPrice = itemView.findViewById(R.id.tv_booking_price);
             tvStatus = itemView.findViewById(R.id.tv_booking_status);
             btnConfirm = itemView.findViewById(R.id.btn_confirm_booking);
+            btnCancel = itemView.findViewById(R.id.btn_cancel_booking);
         }
     }
 }

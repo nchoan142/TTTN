@@ -36,9 +36,11 @@ public class ApiClient {
 
     public static Retrofit getClient() {
         if (retrofit == null) {
+            // HttpLoggingInterceptor ghi log các lời gọi API
             HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
             loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.HEADERS);
 
+            // Interceptor tự động thêm token vào header
             Interceptor authInterceptor = new Interceptor() {
                 @Override
                 public Response intercept(Chain chain) throws IOException {

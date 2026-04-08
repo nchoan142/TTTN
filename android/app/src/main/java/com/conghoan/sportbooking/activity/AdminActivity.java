@@ -105,11 +105,13 @@ public class AdminActivity extends AppCompatActivity {
 
         // Venue adapter with toggle
         venueAdapter = new AdminVenueAdapter(this, venueList, (venue, position) -> toggleVenue(venue, position));
+        venueAdapter.setOnVenueDeleteListener((venue, position) -> deleteVenueApi(venue, position));
 
         // Booking adapter with confirm + detail click
         bookingAdapter = new AdminBookingAdapter(this, bookingList);
         bookingAdapter.setConfirmListener((booking, position) -> confirmBooking(booking, position));
         bookingAdapter.setClickListener((booking, position) -> showBookingDetailDialog(booking));
+        bookingAdapter.setCancelListener((booking, position) -> showCancelBookingConfirmDialog(booking, position));
 
         // Category adapter with edit + delete
         categoryAdapter = new AdminCategoryAdapter(this, categoryList, new AdminCategoryAdapter.OnCategoryActionListener() {
@@ -135,6 +137,8 @@ public class AdminActivity extends AppCompatActivity {
         fabAdd.setOnClickListener(v -> {
             if (currentTab == TAB_CATEGORIES) {
                 showCreateCategoryDialog();
+            } else if (currentTab == TAB_VENUES) {
+                showCreateVenueDialog();
             }
         });
     }
@@ -148,8 +152,8 @@ public class AdminActivity extends AppCompatActivity {
         setTabActive(btnTabBookings, tab == TAB_BOOKINGS);
         setTabActive(btnTabCategories, tab == TAB_CATEGORIES);
 
-        // Show/hide FAB
-        fabAdd.setVisibility(tab == TAB_CATEGORIES ? View.VISIBLE : View.GONE);
+        // Show/hide FAB - cho tab Sân và Danh mục
+        fabAdd.setVisibility((tab == TAB_CATEGORIES || tab == TAB_VENUES) ? View.VISIBLE : View.GONE);
 
         switch (tab) {
             case TAB_USERS:
@@ -496,6 +500,45 @@ public class AdminActivity extends AppCompatActivity {
                 .show();
     }
 
+    // ============ CANCEL BOOKING (admin) ============
+
+    private void showCancelBookingConfirmDialog(Map<String, Object> booking, int position) {
+        long bookingId = getLongId(booking);
+        if (bookingId == -1) {
+            Toast.makeText(this, "Lỗi: Không xác định được ID lịch đặt", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        new AlertDialog.Builder(this)
+                .setTitle("Huỷ lịch đặt")
+                .setMessage("Bạn có chắc muốn huỷ lịch đặt này? Người dùng sẽ thấy lịch chuyển sang trạng thái 'Đã huỷ'.")
+                .setPositiveButton("Huỷ lịch", (dialog, which) -> {
+                    Map<String, Object> body = new HashMap<>();
+                    body.put("status", "CANCELLED");
+
+                    apiService.updateBookingStatus(bookingId, body).enqueue(new Callback<Map<String, Object>>() {
+                        @Override
+                        public void onResponse(Call<Map<String, Object>> call, Response<Map<String, Object>> response) {
+                            if (response.isSuccessful()) {
+                                booking.put("status", "CANCELLED");
+                                bookingAdapter.notifyItemChanged(position);
+                                Toast.makeText(AdminActivity.this, "Đã huỷ lịch đặt", Toast.LENGTH_SHORT).show();
+                                loadStats();
+                            } else {
+                                Toast.makeText(AdminActivity.this, "Lỗi huỷ lịch đặt", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<Map<String, Object>> call, Throwable t) {
+                            Toast.makeText(AdminActivity.this, "Lỗi kết nối: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                })
+                .setNegativeButton("Không", null)
+                .show();
+    }
+
     // ============ BOOKING DETAIL DIALOG ============
 
     @SuppressWarnings("unchecked")
@@ -556,6 +599,160 @@ public class AdminActivity extends AppCompatActivity {
                 .setTitle("Chi tiết lịch đặt")
                 .setMessage(detail.toString())
                 .setPositiveButton("Đóng", null)
+                .show();
+    }
+
+    // ============ VENUE CREATE ============
+
+    private void showCreateVenueDialog() {
+        // Cần load categories trước để show vào spinner
+        apiService.getAdminCategories().enqueue(new Callback<Map<String, Object>>() {
+            @Override
+            public void onResponse(Call<Map<String, Object>> call, Response<Map<String, Object>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    List<Map<String, Object>> categories = extractList(response.body());
+                    showVenueDialogWithCategories(categories);
+                } else {
+                    Toast.makeText(AdminActivity.this, "Không tải được danh mục", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Map<String, Object>> call, Throwable t) {
+                Toast.makeText(AdminActivity.this, "Lỗi kết nối", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void showVenueDialogWithCategories(List<Map<String, Object>> categories) {
+        android.view.View dialogView = android.view.LayoutInflater.from(this)
+                .inflate(R.layout.dialog_create_venue, null);
+
+        EditText etName = dialogView.findViewById(R.id.et_venue_name);
+        EditText etAddress = dialogView.findViewById(R.id.et_venue_address);
+        EditText etPhone = dialogView.findViewById(R.id.et_venue_phone);
+        EditText etOpenTime = dialogView.findViewById(R.id.et_open_time);
+        EditText etCloseTime = dialogView.findViewById(R.id.et_close_time);
+        EditText etPrice = dialogView.findViewById(R.id.et_price);
+        EditText etImageUrl = dialogView.findViewById(R.id.et_image_url);
+        EditText etCourtNames = dialogView.findViewById(R.id.et_court_names);
+        android.widget.Spinner spinnerCategory = dialogView.findViewById(R.id.spinner_category);
+
+        // Setup spinner
+        List<String> categoryNames = new ArrayList<>();
+        List<Long> categoryIds = new ArrayList<>();
+        for (Map<String, Object> cat : categories) {
+            categoryNames.add(getStr(cat, "name"));
+            Object idObj = cat.get("id");
+            if (idObj instanceof Number) categoryIds.add(((Number) idObj).longValue());
+            else categoryIds.add(0L);
+        }
+        android.widget.ArrayAdapter<String> spinnerAdapter = new android.widget.ArrayAdapter<>(
+                this, android.R.layout.simple_spinner_dropdown_item, categoryNames);
+        spinnerCategory.setAdapter(spinnerAdapter);
+
+        new AlertDialog.Builder(this)
+                .setTitle("Thêm sân mới")
+                .setView(dialogView)
+                .setPositiveButton("Tạo", (dialog, which) -> {
+                    String name = etName.getText().toString().trim();
+                    if (name.isEmpty()) {
+                        Toast.makeText(this, "Vui lòng nhập tên sân", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    Map<String, Object> body = new HashMap<>();
+                    body.put("name", name);
+                    body.put("address", etAddress.getText().toString().trim());
+                    body.put("phone", etPhone.getText().toString().trim());
+                    body.put("openTime", etOpenTime.getText().toString().trim());
+                    body.put("closeTime", etCloseTime.getText().toString().trim());
+                    body.put("imageUrl", etImageUrl.getText().toString().trim());
+
+                    String priceStr = etPrice.getText().toString().trim();
+                    if (!priceStr.isEmpty()) {
+                        try {
+                            body.put("pricePerSlot", Double.parseDouble(priceStr));
+                        } catch (NumberFormatException ignored) {}
+                    }
+
+                    int catPos = spinnerCategory.getSelectedItemPosition();
+                    if (catPos >= 0 && catPos < categoryIds.size()) {
+                        body.put("categoryId", categoryIds.get(catPos));
+                    }
+
+                    String courtNamesStr = etCourtNames.getText().toString().trim();
+                    if (!courtNamesStr.isEmpty()) {
+                        List<String> courtNames = new ArrayList<>();
+                        for (String cn : courtNamesStr.split(",")) {
+                            String trimmed = cn.trim();
+                            if (!trimmed.isEmpty()) courtNames.add(trimmed);
+                        }
+                        body.put("courtNames", courtNames);
+                    }
+
+                    createVenueApi(body);
+                })
+                .setNegativeButton("Huỷ", null)
+                .show();
+    }
+
+    private void createVenueApi(Map<String, Object> body) {
+        apiService.createVenue(body).enqueue(new Callback<Map<String, Object>>() {
+            @Override
+            public void onResponse(Call<Map<String, Object>> call, Response<Map<String, Object>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    Boolean success = (Boolean) response.body().get("success");
+                    if (Boolean.TRUE.equals(success)) {
+                        Toast.makeText(AdminActivity.this, "Tạo sân thành công", Toast.LENGTH_SHORT).show();
+                        loadVenues();
+                        loadStats();
+                    } else {
+                        String msg = (String) response.body().get("message");
+                        Toast.makeText(AdminActivity.this, msg != null ? msg : "Lỗi tạo sân", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText(AdminActivity.this, "Lỗi tạo sân: " + response.code(), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Map<String, Object>> call, Throwable t) {
+                Toast.makeText(AdminActivity.this, "Lỗi kết nối: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void deleteVenueApi(Map<String, Object> venue, int position) {
+        Object idObj = venue.get("id");
+        long venueId;
+        if (idObj instanceof Number) venueId = ((Number) idObj).longValue();
+        else return;
+
+        String venueName = getStr(venue, "name");
+        new AlertDialog.Builder(this)
+                .setTitle("Xoá sân")
+                .setMessage("Bạn có chắc muốn xoá sân \"" + venueName + "\"? Hành động này không thể hoàn tác.")
+                .setPositiveButton("Xoá", (d, w) -> {
+                    apiService.deleteVenue(venueId).enqueue(new Callback<Map<String, Object>>() {
+                        @Override
+                        public void onResponse(Call<Map<String, Object>> call, Response<Map<String, Object>> response) {
+                            if (response.isSuccessful()) {
+                                Toast.makeText(AdminActivity.this, "Đã xoá sân", Toast.LENGTH_SHORT).show();
+                                loadVenues();
+                                loadStats();
+                            } else {
+                                Toast.makeText(AdminActivity.this, "Không xoá được sân (có thể đang có lịch đặt)", Toast.LENGTH_LONG).show();
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<Map<String, Object>> call, Throwable t) {
+                            Toast.makeText(AdminActivity.this, "Lỗi kết nối", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                })
+                .setNegativeButton("Huỷ", null)
                 .show();
     }
 

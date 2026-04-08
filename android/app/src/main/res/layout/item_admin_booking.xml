@@ -106,18 +106,41 @@
 
         </LinearLayout>
 
-        <!-- Confirm button for PENDING bookings -->
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_confirm_booking"
+        <!-- Action buttons row -->
+        <LinearLayout
+            android:id="@+id/ll_admin_actions"
             android:layout_width="match_parent"
-            android:layout_height="36dp"
+            android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="Xác nhận đặt sân"
-            android:textAllCaps="false"
-            android:textSize="13sp"
-            android:visibility="gone"
-            app:backgroundTint="#2E7D32"
-            app:cornerRadius="8dp" />
+            android:orientation="horizontal">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_confirm_booking"
+                android:layout_width="0dp"
+                android:layout_height="36dp"
+                android:layout_weight="1"
+                android:layout_marginEnd="4dp"
+                android:text="Xác nhận"
+                android:textAllCaps="false"
+                android:textSize="13sp"
+                android:visibility="gone"
+                app:backgroundTint="#2E7D32"
+                app:cornerRadius="8dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_cancel_booking"
+                android:layout_width="0dp"
+                android:layout_height="36dp"
+                android:layout_weight="1"
+                android:layout_marginStart="4dp"
+                android:text="Huỷ lịch"
+                android:textAllCaps="false"
+                android:textSize="13sp"
+                android:visibility="gone"
+                app:backgroundTint="#EF5350"
+                app:cornerRadius="8dp" />
+
+        </LinearLayout>
 
     </LinearLayout>
 

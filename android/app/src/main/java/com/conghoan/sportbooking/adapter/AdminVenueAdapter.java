@@ -22,14 +22,23 @@ public class AdminVenueAdapter extends RecyclerView.Adapter<AdminVenueAdapter.Vi
         void onToggleClick(Map<String, Object> venue, int position);
     }
 
+    public interface OnVenueDeleteListener {
+        void onDeleteClick(Map<String, Object> venue, int position);
+    }
+
     private Context context;
     private List<Map<String, Object>> venueList;
     private OnToggleClickListener toggleListener;
+    private OnVenueDeleteListener deleteListener;
 
     public AdminVenueAdapter(Context context, List<Map<String, Object>> venueList, OnToggleClickListener listener) {
         this.context = context;
         this.venueList = venueList;
         this.toggleListener = listener;
+    }
+
+    public void setOnVenueDeleteListener(OnVenueDeleteListener listener) {
+        this.deleteListener = listener;
     }
 
     @NonNull
@@ -69,6 +78,15 @@ public class AdminVenueAdapter extends RecyclerView.Adapter<AdminVenueAdapter.Vi
             if (toggleListener != null) {
                 toggleListener.onToggleClick(venue, position);
             }
+        });
+
+        // Long-press để xoá sân
+        holder.itemView.setOnLongClickListener(v -> {
+            if (deleteListener != null) {
+                deleteListener.onDeleteClick(venue, holder.getAdapterPosition());
+                return true;
+            }
+            return false;
         });
     }
 

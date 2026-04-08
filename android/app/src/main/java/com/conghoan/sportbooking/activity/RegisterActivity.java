@@ -23,7 +23,7 @@ import retrofit2.Response;
 
 public class RegisterActivity extends AppCompatActivity {
 
-    private EditText edtFullname, edtEmail, edtPhone, edtPassword;
+    private EditText edtFullName, edtEmail, edtPhone, edtPassword;
     private Button btnRegister;
     private ImageButton btnBack;
 
@@ -37,7 +37,7 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void initViews() {
-        edtFullname = findViewById(R.id.et_fullname);
+        edtFullName = findViewById(R.id.et_fullname);
         edtEmail = findViewById(R.id.et_email);
         edtPhone = findViewById(R.id.et_phone);
         edtPassword = findViewById(R.id.et_password);
@@ -51,21 +51,21 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void attemptRegister() {
-        String fullName = edtFullname.getText().toString().trim();
+        String fullName = edtFullName.getText().toString().trim();
         String email = edtEmail.getText().toString().trim();
         String phone = edtPhone.getText().toString().trim();
         String password = edtPassword.getText().toString().trim();
 
         // Validate fields
         if (TextUtils.isEmpty(fullName)) {
-            edtFullname.setError("Vui lòng nhập họ tên");
-            edtFullname.requestFocus();
+            edtFullName.setError("Vui lòng nhập họ tên");
+            edtFullName.requestFocus();
             return;
         }
 
         if (fullName.length() < 2) {
-            edtFullname.setError("Họ tên phải có ít nhất 2 ký tự");
-            edtFullname.requestFocus();
+            edtFullName.setError("Họ tên phải có ít nhất 2 ký tự");
+            edtFullName.requestFocus();
             return;
         }
 

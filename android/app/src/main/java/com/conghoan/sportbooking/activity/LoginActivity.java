@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -107,6 +108,7 @@ public class LoginActivity extends AppCompatActivity {
                     String userEmail = data.get("email") != null ? data.get("email").toString() : email;
                     String phone = data.get("phone") != null ? data.get("phone").toString() : "";
                     String role = data.get("role") != null ? data.get("role").toString() : "USER";
+                    Log.d("LoginActivity", "phone: " + phone + " role: " + role);
 
                     if (token.isEmpty()) {
                         Toast.makeText(LoginActivity.this, "Đăng nhập thất bại: Không nhận được token", Toast.LENGTH_LONG).show();

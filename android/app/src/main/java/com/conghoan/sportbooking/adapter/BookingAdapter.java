@@ -2,6 +2,7 @@ package com.conghoan.sportbooking.adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,6 +48,7 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.BookingV
     @Override
     public void onBindViewHolder(@NonNull BookingViewHolder holder, int position) {
         BookingItem booking = bookingList.get(position);
+        Log.d("BookingAdapter", "BookingDate: " + booking.getDate());
 
         holder.tvVenueName.setText(booking.getVenueName());
         holder.tvCourtName.setText(booking.getCourtName());

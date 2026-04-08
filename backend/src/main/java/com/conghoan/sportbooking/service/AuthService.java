@@ -25,6 +25,7 @@ public class AuthService {
                 .fullName(request.getFullName())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
+//                .password(request.getPassword())
                 .phone(request.getPhone())
                 .role(User.Role.USER)
                 .build();
@@ -32,7 +33,7 @@ public class AuthService {
         user = userRepository.save(user);
         String token = jwtUtil.generateToken(user.getEmail(), user.getId());
 
-        return new AuthResponse(token, user.getId(), user.getFullName(), user.getEmail(), user.getRole().name());
+        return new AuthResponse(token, user.getId(), user.getFullName(), user.getEmail(), user.getPhone(), user.getRole().name());
     }
 
     public AuthResponse login(AuthRequest request) {
@@ -44,7 +45,7 @@ public class AuthService {
         }
 
         String token = jwtUtil.generateToken(user.getEmail(), user.getId());
-        return new AuthResponse(token, user.getId(), user.getFullName(), user.getEmail(), user.getRole().name());
+        return new AuthResponse(token, user.getId(), user.getFullName(), user.getEmail(), user.getPhone(), user.getRole().name());
     }
 
     // Xử lí update profile

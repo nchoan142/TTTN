@@ -31,6 +31,7 @@ public class DataSeeder implements CommandLineRunner {
                 .fullName("Nguyễn Công Hoàn")
                 .email("hoan@test.com")
                 .password(passwordEncoder.encode("123456"))
+//                .password("123456")
                 .phone("0912345678")
                 .role(User.Role.USER)
                 .build());
@@ -39,6 +40,7 @@ public class DataSeeder implements CommandLineRunner {
                 .fullName("Chủ sân Demo")
                 .email("owner@test.com")
                 .password(passwordEncoder.encode("123456"))
+//                .password("123456")
                 .phone("0987654321")
                 .role(User.Role.OWNER)
                 .build());
@@ -47,6 +49,7 @@ public class DataSeeder implements CommandLineRunner {
                 .fullName("Admin System")
                 .email("admin@test.com")
                 .password(passwordEncoder.encode("123456"))
+//                .password("123456")
                 .phone("0900000000")
                 .role(User.Role.ADMIN)
                 .build());

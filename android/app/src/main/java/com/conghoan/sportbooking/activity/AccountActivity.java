@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
@@ -18,8 +19,8 @@ import com.conghoan.sportbooking.R;
 import com.conghoan.sportbooking.api.ApiClient;
 import com.conghoan.sportbooking.api.ApiService;
 import com.google.android.material.button.MaterialButton;
-import com.google.android.material.textfield.TextInputEditText;
 
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,7 +33,7 @@ public class AccountActivity extends AppCompatActivity {
     private static final String PREF_NAME = "SportBooking";
 
     private TextView tvAvatarInitials, tvHeaderName, tvHeaderEmail;
-    private EditText etFullname, etEmail, etPhone;
+    private EditText etFullName, etEmail, etPhone;
     private MaterialButton btnUpdateProfile, btnChangePassword, btnLogout, btnAdminPanel;
     private ImageButton btnBack;
 
@@ -50,7 +51,7 @@ public class AccountActivity extends AppCompatActivity {
         tvAvatarInitials = findViewById(R.id.tv_avatar_initials);
         tvHeaderName = findViewById(R.id.tv_header_name);
         tvHeaderEmail = findViewById(R.id.tv_header_email);
-        etFullname = findViewById(R.id.et_fullname);
+        etFullName = findViewById(R.id.et_fullname);
         etEmail = findViewById(R.id.et_email);
         etPhone = findViewById(R.id.et_phone);
         btnUpdateProfile = findViewById(R.id.btn_update_profile);
@@ -79,11 +80,11 @@ public class AccountActivity extends AppCompatActivity {
         }
 
         // Set form fields
-        etFullname.setText(fullName);
+        etFullName.setText(fullName);
         etEmail.setText(email);
         etPhone.setText(phone);
 
-        // Show admin button if role is ADMIN
+        // Hiển thị button AdminPanel nếu user có role là ADMIN
         String role = prefs.getString("role", "USER");
         if ("ADMIN".equals(role)) {
             btnAdminPanel.setVisibility(android.view.View.VISIBLE);
@@ -105,9 +106,7 @@ public class AccountActivity extends AppCompatActivity {
     private void setupListeners() {
         btnBack.setOnClickListener(v -> finish());
 
-        btnUpdateProfile.setOnClickListener(v -> {
-            Toast.makeText(this, "Chức năng đang phát triển", Toast.LENGTH_SHORT).show();
-        });
+        btnUpdateProfile.setOnClickListener(v -> performUpdateProfile());
 
         btnChangePassword.setOnClickListener(v -> showChangePasswordDialog());
 
@@ -116,6 +115,50 @@ public class AccountActivity extends AppCompatActivity {
         });
 
         btnLogout.setOnClickListener(v -> showLogoutConfirmation());
+    }
+
+    private void performUpdateProfile() {
+        String fullName = etFullName.getText().toString().trim();
+        String email = etEmail.getText().toString().trim();
+        String phone = etPhone.getText().toString().trim();
+
+        // Validate
+        if (TextUtils.isEmpty(fullName) || TextUtils.isEmpty(email) || TextUtils.isEmpty(phone)) {
+            Toast.makeText(this, "Vui lòng nhập đầy đủ thông tin", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Chuẩn bị Body (ở đây là 1 Map)
+        Map<String, String> body = new HashMap<>();
+        body.put("fullName", fullName);
+        body.put("email", email);
+        body.put("phone", phone);
+
+        // Gọi API
+        ApiClient.getApiService().updateProfile(body).enqueue(new Callback<Map<String, Object>>() {
+            @Override
+            public void onResponse(Call<Map<String, Object>> call, Response<Map<String, Object>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    //Cập nhật thành công, lưu lại vào SharedPreferences
+                    SharedPreferences.Editor editor = getSharedPreferences(PREF_NAME, MODE_PRIVATE).edit();
+                    editor.putString("fullName", fullName);
+                    editor.putString("email", email);
+                    editor.putString("phone", phone);
+                    editor.apply();
+
+                    // Cập nhật lại giao diện
+                    loadUserInfo();
+                    Toast.makeText(AccountActivity.this, "Cập nhật thành công!", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(AccountActivity.this, "Cập nhật thất bại, thử lại sau", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Map<String, Object>> call, Throwable t) {
+                Toast.makeText(AccountActivity.this, "Lỗi kết nối mạng", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void showChangePasswordDialog() {
@@ -136,6 +179,7 @@ public class AccountActivity extends AppCompatActivity {
                 String oldPw = etOld.getText().toString().trim();
                 String newPw = etNew.getText().toString().trim();
                 String confirmPw = etConfirm.getText().toString().trim();
+                Log.d("AccountActivity", "OldPass: " + oldPw + ", NewPass: " + newPw + ", ConfirmPass: " + confirmPw);
 
                 if (oldPw.isEmpty()) {
                     etOld.setError("Nhập mật khẩu cũ");
@@ -158,6 +202,8 @@ public class AccountActivity extends AppCompatActivity {
                 apiService.changePassword(body).enqueue(new Callback<Map<String, Object>>() {
                     @Override
                     public void onResponse(Call<Map<String, Object>> call, Response<Map<String, Object>> response) {
+                        Log.d("AccountActivity", "Response: " + response.toString());
+                        Log.d("AccountActivity", "Response isSuccessful: " + response.isSuccessful());
                         if (response.isSuccessful() && response.body() != null) {
                             Map<String, Object> res = response.body();
                             Boolean success = (Boolean) res.get("success");
