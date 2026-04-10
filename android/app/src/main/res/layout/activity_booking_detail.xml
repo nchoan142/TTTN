@@ -40,7 +40,8 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:overScrollMode="never">
 
         <LinearLayout
@@ -432,6 +433,8 @@
 
         </LinearLayout>
 
+
+
     </ScrollView>
 
     <!-- Bottom bar: nút huỷ (chỉ hiện khi PENDING) -->
@@ -446,7 +449,7 @@
         android:paddingEnd="16dp"
         android:paddingTop="12dp"
         android:paddingBottom="16dp"
-        android:visibility="gone">
+        android:visibility="invisible">
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_cancel_booking"

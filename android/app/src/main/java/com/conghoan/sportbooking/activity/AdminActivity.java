@@ -49,7 +49,7 @@ public class AdminActivity extends AppCompatActivity {
     private ProgressBar progressBar;
     private TextView tvEmpty;
     private ImageButton btnBack;
-    private FloatingActionButton fabAdd;
+    private FloatingActionButton faBtnAdd;
 
     private ApiService apiService;
     private int currentTab = TAB_USERS;
@@ -59,11 +59,12 @@ public class AdminActivity extends AppCompatActivity {
     private List<Map<String, Object>> bookingList = new ArrayList<>();
     private List<Map<String, Object>> categoryList = new ArrayList<>();
 
-    private AdminUserAdapter userAdapter;
-    private AdminVenueAdapter venueAdapter;
-    private AdminBookingAdapter bookingAdapter;
-    private AdminCategoryAdapter categoryAdapter;
+    private AdminUserAdapter adminUserAdapter;
+    private AdminVenueAdapter adminVenueAdapter;
+    private AdminBookingAdapter adminBookingAdapter;
+    private AdminCategoryAdapter adminCategoryAdapter;
 
+    // format number theo định dạng Việt Nam
     private final NumberFormat currencyFormat = NumberFormat.getInstance(new Locale("vi", "VN"));
 
     @Override
@@ -93,28 +94,28 @@ public class AdminActivity extends AppCompatActivity {
         rvList = findViewById(R.id.rv_admin_list);
         progressBar = findViewById(R.id.progress_bar);
         tvEmpty = findViewById(R.id.tv_empty);
-        fabAdd = findViewById(R.id.fab_add);
+        faBtnAdd = findViewById(R.id.fab_add);
 
         rvList.setLayoutManager(new LinearLayoutManager(this));
     }
 
     private void setupAdapters() {
         // User adapter with role change + delete
-        userAdapter = new AdminUserAdapter(this, userList, (user, position) -> showRoleDialog(user, position));
-        userAdapter.setDeleteListener((user, position) -> showDeleteUserDialog(user, position));
+        adminUserAdapter = new AdminUserAdapter(this, userList, (user, position) -> showRoleDialog(user, position));
+        adminUserAdapter.setDeleteListener((user, position) -> showDeleteUserDialog(user, position));
 
         // Venue adapter with toggle
-        venueAdapter = new AdminVenueAdapter(this, venueList, (venue, position) -> toggleVenue(venue, position));
-        venueAdapter.setOnVenueDeleteListener((venue, position) -> deleteVenueApi(venue, position));
+        adminVenueAdapter = new AdminVenueAdapter(this, venueList, (venue, position) -> toggleVenue(venue, position));
+        adminVenueAdapter.setOnVenueDeleteListener((venue, position) -> deleteVenueApi(venue, position));
 
         // Booking adapter with confirm + detail click
-        bookingAdapter = new AdminBookingAdapter(this, bookingList);
-        bookingAdapter.setConfirmListener((booking, position) -> confirmBooking(booking, position));
-        bookingAdapter.setClickListener((booking, position) -> showBookingDetailDialog(booking));
-        bookingAdapter.setCancelListener((booking, position) -> showCancelBookingConfirmDialog(booking, position));
+        adminBookingAdapter = new AdminBookingAdapter(this, bookingList);
+        adminBookingAdapter.setConfirmListener((booking, position) -> confirmBooking(booking, position));
+        adminBookingAdapter.setClickListener((booking, position) -> showBookingDetailDialog(booking));
+        adminBookingAdapter.setCancelListener((booking, position) -> showCancelBookingConfirmDialog(booking, position));
 
         // Category adapter with edit + delete
-        categoryAdapter = new AdminCategoryAdapter(this, categoryList, new AdminCategoryAdapter.OnCategoryActionListener() {
+        adminCategoryAdapter = new AdminCategoryAdapter(this, categoryList, new AdminCategoryAdapter.OnCategoryActionListener() {
             @Override
             public void onEditClick(Map<String, Object> category, int position) {
                 showEditCategoryDialog(category, position);
@@ -134,7 +135,7 @@ public class AdminActivity extends AppCompatActivity {
         btnTabBookings.setOnClickListener(v -> switchTab(TAB_BOOKINGS));
         btnTabCategories.setOnClickListener(v -> switchTab(TAB_CATEGORIES));
 
-        fabAdd.setOnClickListener(v -> {
+        faBtnAdd.setOnClickListener(v -> {
             if (currentTab == TAB_CATEGORIES) {
                 showCreateCategoryDialog();
             } else if (currentTab == TAB_VENUES) {
@@ -153,23 +154,23 @@ public class AdminActivity extends AppCompatActivity {
         setTabActive(btnTabCategories, tab == TAB_CATEGORIES);
 
         // Show/hide FAB - cho tab Sân và Danh mục
-        fabAdd.setVisibility((tab == TAB_CATEGORIES || tab == TAB_VENUES) ? View.VISIBLE : View.GONE);
+        faBtnAdd.setVisibility((tab == TAB_CATEGORIES || tab == TAB_VENUES) ? View.VISIBLE : View.GONE);
 
         switch (tab) {
             case TAB_USERS:
-                rvList.setAdapter(userAdapter);
+                rvList.setAdapter(adminUserAdapter);
                 loadUsers();
                 break;
             case TAB_VENUES:
-                rvList.setAdapter(venueAdapter);
+                rvList.setAdapter(adminVenueAdapter);
                 loadVenues();
                 break;
             case TAB_BOOKINGS:
-                rvList.setAdapter(bookingAdapter);
+                rvList.setAdapter(adminBookingAdapter);
                 loadBookings();
                 break;
             case TAB_CATEGORIES:
-                rvList.setAdapter(categoryAdapter);
+                rvList.setAdapter(adminCategoryAdapter);
                 loadCategories();
                 break;
         }
@@ -185,8 +186,7 @@ public class AdminActivity extends AppCompatActivity {
         }
     }
 
-    // ============ LOAD STATS ============
-
+    // Load Stats cho UI
     private void loadStats() {
         apiService.getAdminStats().enqueue(new Callback<Map<String, Object>>() {
             @Override
@@ -202,6 +202,7 @@ public class AdminActivity extends AppCompatActivity {
                     tvStatVenues.setText(String.valueOf(getInt(data, "totalVenues")));
                     tvStatBookings.setText(String.valueOf(getInt(data, "totalBookings")));
 
+                    // Doanh thu
                     double revenue = getDouble(data, "totalRevenue");
                     tvStatRevenue.setText(currencyFormat.format(revenue) + "đ");
                 }
@@ -214,8 +215,7 @@ public class AdminActivity extends AppCompatActivity {
         });
     }
 
-    // ============ LOAD USERS ============
-
+    // Load danh sách User đã có cho UI
     private void loadUsers() {
         showLoading(true);
         apiService.getAdminUsers().enqueue(new Callback<Map<String, Object>>() {
@@ -227,7 +227,7 @@ public class AdminActivity extends AppCompatActivity {
                     List<Map<String, Object>> data = extractList(body);
                     userList.clear();
                     userList.addAll(data);
-                    userAdapter.notifyDataSetChanged();
+                    adminUserAdapter.notifyDataSetChanged();
                     tvEmpty.setVisibility(userList.isEmpty() ? View.VISIBLE : View.GONE);
                     btnTabUsers.setText("Người dùng (" + userList.size() + ")");
                 } else {
@@ -244,8 +244,7 @@ public class AdminActivity extends AppCompatActivity {
         });
     }
 
-    // ============ LOAD VENUES ============
-
+    // Load danh sách Venue(sân thể thao) đã có cho UI
     private void loadVenues() {
         showLoading(true);
         apiService.getAdminVenues().enqueue(new Callback<Map<String, Object>>() {
@@ -257,7 +256,7 @@ public class AdminActivity extends AppCompatActivity {
                     List<Map<String, Object>> data = extractList(body);
                     venueList.clear();
                     venueList.addAll(data);
-                    venueAdapter.notifyDataSetChanged();
+                    adminVenueAdapter.notifyDataSetChanged();
                     tvEmpty.setVisibility(venueList.isEmpty() ? View.VISIBLE : View.GONE);
                 } else {
                     tvEmpty.setVisibility(View.VISIBLE);
@@ -273,8 +272,7 @@ public class AdminActivity extends AppCompatActivity {
         });
     }
 
-    // ============ LOAD BOOKINGS ============
-
+    // Load danh sách Bookingđã có cho UI
     private void loadBookings() {
         showLoading(true);
         apiService.getAdminBookings().enqueue(new Callback<Map<String, Object>>() {
@@ -286,7 +284,7 @@ public class AdminActivity extends AppCompatActivity {
                     List<Map<String, Object>> data = extractList(body);
                     bookingList.clear();
                     bookingList.addAll(data);
-                    bookingAdapter.notifyDataSetChanged();
+                    adminBookingAdapter.notifyDataSetChanged();
                     tvEmpty.setVisibility(bookingList.isEmpty() ? View.VISIBLE : View.GONE);
                 } else {
                     tvEmpty.setVisibility(View.VISIBLE);
@@ -302,8 +300,7 @@ public class AdminActivity extends AppCompatActivity {
         });
     }
 
-    // ============ LOAD CATEGORIES ============
-
+    // Load danh sách Category(danh mục) đã có cho UI
     private void loadCategories() {
         showLoading(true);
         apiService.getAdminCategories().enqueue(new Callback<Map<String, Object>>() {
@@ -315,7 +312,7 @@ public class AdminActivity extends AppCompatActivity {
                     List<Map<String, Object>> data = extractList(body);
                     categoryList.clear();
                     categoryList.addAll(data);
-                    categoryAdapter.notifyDataSetChanged();
+                    adminCategoryAdapter.notifyDataSetChanged();
                     tvEmpty.setVisibility(categoryList.isEmpty() ? View.VISIBLE : View.GONE);
                 } else {
                     tvEmpty.setVisibility(View.VISIBLE);
@@ -375,7 +372,7 @@ public class AdminActivity extends AppCompatActivity {
             public void onResponse(Call<Map<String, Object>> call, Response<Map<String, Object>> response) {
                 if (response.isSuccessful()) {
                     user.put("role", newRole);
-                    userAdapter.notifyItemChanged(position);
+                    adminUserAdapter.notifyItemChanged(position);
                     Toast.makeText(AdminActivity.this, "Đã cập nhật vai trò thành " + newRole, Toast.LENGTH_SHORT).show();
                     loadStats();
                 } else {
@@ -415,8 +412,8 @@ public class AdminActivity extends AppCompatActivity {
             public void onResponse(Call<Map<String, Object>> call, Response<Map<String, Object>> response) {
                 if (response.isSuccessful()) {
                     userList.remove(position);
-                    userAdapter.notifyItemRemoved(position);
-                    userAdapter.notifyItemRangeChanged(position, userList.size());
+                    adminUserAdapter.notifyItemRemoved(position);
+                    adminUserAdapter.notifyItemRangeChanged(position, userList.size());
                     btnTabUsers.setText("Người dùng (" + userList.size() + ")");
                     Toast.makeText(AdminActivity.this, "Đã xóa người dùng thành công", Toast.LENGTH_SHORT).show();
                     loadStats();
@@ -447,7 +444,7 @@ public class AdminActivity extends AppCompatActivity {
                 if (response.isSuccessful()) {
                     boolean currentActive = getBool(venue, "active");
                     venue.put("active", !currentActive);
-                    venueAdapter.notifyItemChanged(position);
+                    adminVenueAdapter.notifyItemChanged(position);
                     String msg = !currentActive ? "Đã mở sân hoạt động" : "Đã khoá sân";
                     Toast.makeText(AdminActivity.this, msg, Toast.LENGTH_SHORT).show();
                 } else {
@@ -483,7 +480,7 @@ public class AdminActivity extends AppCompatActivity {
                         public void onResponse(Call<Map<String, Object>> call, Response<Map<String, Object>> response) {
                             if (response.isSuccessful()) {
                                 booking.put("status", "CONFIRMED");
-                                bookingAdapter.notifyItemChanged(position);
+                                adminBookingAdapter.notifyItemChanged(position);
                                 Toast.makeText(AdminActivity.this, "Đã xác nhận lịch đặt", Toast.LENGTH_SHORT).show();
                             } else {
                                 Toast.makeText(AdminActivity.this, "Lỗi xác nhận lịch đặt", Toast.LENGTH_SHORT).show();
@@ -521,7 +518,7 @@ public class AdminActivity extends AppCompatActivity {
                         public void onResponse(Call<Map<String, Object>> call, Response<Map<String, Object>> response) {
                             if (response.isSuccessful()) {
                                 booking.put("status", "CANCELLED");
-                                bookingAdapter.notifyItemChanged(position);
+                                adminBookingAdapter.notifyItemChanged(position);
                                 Toast.makeText(AdminActivity.this, "Đã huỷ lịch đặt", Toast.LENGTH_SHORT).show();
                                 loadStats();
                             } else {
@@ -602,8 +599,8 @@ public class AdminActivity extends AppCompatActivity {
                 .show();
     }
 
-    // ============ VENUE CREATE ============
-
+    // Hiện thị dialog thêm mới sân thể thao
+    // khi bấm nút add
     private void showCreateVenueDialog() {
         // Cần load categories trước để show vào spinner
         apiService.getAdminCategories().enqueue(new Callback<Map<String, Object>>() {
@@ -624,6 +621,7 @@ public class AdminActivity extends AppCompatActivity {
         });
     }
 
+    // Hiển thị dialog thêm mới sân thể thao
     private void showVenueDialogWithCategories(List<Map<String, Object>> categories) {
         android.view.View dialogView = android.view.LayoutInflater.from(this)
                 .inflate(R.layout.dialog_create_venue, null);
@@ -638,7 +636,7 @@ public class AdminActivity extends AppCompatActivity {
         EditText etCourtNames = dialogView.findViewById(R.id.et_court_names);
         android.widget.Spinner spinnerCategory = dialogView.findViewById(R.id.spinner_category);
 
-        // Setup spinner
+        // Spinner chứa tên các danh mục (Pickleball, Tennis,...)
         List<String> categoryNames = new ArrayList<>();
         List<Long> categoryIds = new ArrayList<>();
         for (Map<String, Object> cat : categories) {
@@ -756,8 +754,6 @@ public class AdminActivity extends AppCompatActivity {
                 .show();
     }
 
-    // ============ CATEGORY CRUD ============
-
     private void showCreateCategoryDialog() {
         LinearLayout layout = new LinearLayout(this);
         layout.setOrientation(LinearLayout.VERTICAL);
@@ -854,13 +850,14 @@ public class AdminActivity extends AppCompatActivity {
                     body.put("name", name);
                     body.put("iconUrl", iconUrl);
 
+                    // Cập nhật tên category trong database sau khi nhấn Lưu
                     apiService.updateCategory(categoryId, body).enqueue(new Callback<Map<String, Object>>() {
                         @Override
                         public void onResponse(Call<Map<String, Object>> call, Response<Map<String, Object>> response) {
                             if (response.isSuccessful()) {
                                 category.put("name", name);
                                 category.put("iconUrl", iconUrl);
-                                categoryAdapter.notifyItemChanged(position);
+                                adminCategoryAdapter.notifyItemChanged(position);
                                 Toast.makeText(AdminActivity.this, "Đã cập nhật danh mục", Toast.LENGTH_SHORT).show();
                             } else {
                                 Toast.makeText(AdminActivity.this, "Lỗi cập nhật danh mục", Toast.LENGTH_SHORT).show();
@@ -895,8 +892,8 @@ public class AdminActivity extends AppCompatActivity {
                         public void onResponse(Call<Map<String, Object>> call, Response<Map<String, Object>> response) {
                             if (response.isSuccessful()) {
                                 categoryList.remove(position);
-                                categoryAdapter.notifyItemRemoved(position);
-                                categoryAdapter.notifyItemRangeChanged(position, categoryList.size());
+                                adminCategoryAdapter.notifyItemRemoved(position);
+                                adminCategoryAdapter.notifyItemRangeChanged(position, categoryList.size());
                                 Toast.makeText(AdminActivity.this, "Đã xóa danh mục \"" + name + "\"", Toast.LENGTH_SHORT).show();
                             } else {
                                 Toast.makeText(AdminActivity.this, "Lỗi xóa danh mục", Toast.LENGTH_SHORT).show();
@@ -913,8 +910,7 @@ public class AdminActivity extends AppCompatActivity {
                 .show();
     }
 
-    // ============ HELPERS ============
-
+    // Helpers
     private void showLoading(boolean show) {
         progressBar.setVisibility(show ? View.VISIBLE : View.GONE);
         if (show) {
@@ -922,6 +918,7 @@ public class AdminActivity extends AppCompatActivity {
         }
     }
 
+    // id của các object trong database
     private long getLongId(Map<String, Object> map) {
         Object idObj = map.get("id");
         if (idObj instanceof Number) {

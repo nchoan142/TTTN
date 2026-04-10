@@ -2,10 +2,10 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:background="@color/bg_screen">
 
-    <!-- Header -->
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -36,7 +36,6 @@
 
     </RelativeLayout>
 
-    <!-- Filter chips - Category -->
     <HorizontalScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -155,7 +154,6 @@
 
     </HorizontalScrollView>
 
-    <!-- Sort options -->
     <HorizontalScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -218,7 +216,6 @@
 
     </HorizontalScrollView>
 
-    <!-- Content area -->
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -231,9 +228,9 @@
             android:paddingStart="16dp"
             android:paddingEnd="16dp"
             android:paddingTop="4dp"
-            android:clipToPadding="false" />
+            android:clipToPadding="false"
+            tools:listitem="@layout/item_venue"/>
 
-        <!-- Empty state -->
         <LinearLayout
             android:id="@+id/ll_empty"
             android:layout_width="wrap_content"
@@ -260,7 +257,6 @@
 
         </LinearLayout>
 
-        <!-- Loading -->
         <ProgressBar
             android:id="@+id/progress_bar"
             android:layout_width="48dp"

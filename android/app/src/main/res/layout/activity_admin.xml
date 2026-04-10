@@ -239,7 +239,7 @@
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_tab_users"
             android:layout_width="0dp"
-            android:layout_height="40dp"
+            android:layout_height="60dp"
             android:layout_marginEnd="4dp"
             android:layout_weight="1"
             android:text="Người dùng"
@@ -251,7 +251,7 @@
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_tab_venues"
             android:layout_width="0dp"
-            android:layout_height="40dp"
+            android:layout_height="60dp"
             android:layout_marginStart="4dp"
             android:layout_marginEnd="4dp"
             android:layout_weight="1"
@@ -265,7 +265,7 @@
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_tab_bookings"
             android:layout_width="0dp"
-            android:layout_height="40dp"
+            android:layout_height="60dp"
             android:layout_marginStart="4dp"
             android:layout_marginEnd="4dp"
             android:layout_weight="1"
@@ -279,7 +279,7 @@
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_tab_categories"
             android:layout_width="0dp"
-            android:layout_height="40dp"
+            android:layout_height="60dp"
             android:layout_marginStart="4dp"
             android:layout_weight="1"
             android:text="Danh mục"
@@ -298,7 +298,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:indeterminateTint="#2E7D32"
-        android:visibility="gone" />
+        android:visibility="invisible" />
 
     <!-- Empty state -->
     <TextView

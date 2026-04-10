@@ -128,7 +128,6 @@ public class BookingActivity extends AppCompatActivity {
         SimpleDateFormat sdf = new SimpleDateFormat("EEEE, dd/MM/yyyy", new Locale("vi", "VN"));
         if (tvSelectedDate != null) {
             String dateText = sdf.format(selectedDate.getTime());
-            // Capitalize first letter
             dateText = dateText.substring(0, 1).toUpperCase() + dateText.substring(1);
             tvSelectedDate.setText(dateText);
         }
@@ -184,9 +183,9 @@ public class BookingActivity extends AppCompatActivity {
         dialog.show();
     }
 
-    // ========== API: Load slots ==========
 
     private void loadSlots() {
+        // Format lịch theo lịch của US
         SimpleDateFormat apiDateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
         String dateStr = apiDateFormat.format(selectedDate.getTime());
 
@@ -207,7 +206,6 @@ public class BookingActivity extends AppCompatActivity {
                     }
                     parseAndBuildGrid(slotList);
                 } else {
-                    // Fallback: build demo grid
                     buildDemoGrid();
                 }
             }
@@ -215,7 +213,6 @@ public class BookingActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<Map<String, Object>> call, Throwable t) {
                 showLoading(false);
-                // Fallback: build demo grid for offline testing
                 buildDemoGrid();
             }
         });
@@ -230,10 +227,7 @@ public class BookingActivity extends AppCompatActivity {
         }
     }
 
-    // ========== Parse API response ==========
-
     private void parseAndBuildGrid(List<Map<String, Object>> slots) {
-        // Determine court count and time slot count from response
         int maxCourt = 0;
         int maxTime = 0;
 
@@ -263,10 +257,9 @@ public class BookingActivity extends AppCompatActivity {
             courtCount = courtNames.size();
         }
 
-        // Build time labels
         buildTimeLabels();
 
-        // Initialize grid
+        // Tạo array 2 chiều để lưu trạng thái slot
         slotGrid = new SlotInfo[timeSlotCount][courtCount];
         for (int t = 0; t < timeSlotCount; t++) {
             for (int c = 0; c < courtCount; c++) {
@@ -282,12 +275,12 @@ public class BookingActivity extends AppCompatActivity {
             if (ti < timeSlotCount && ci < courtCount) {
                 slotGrid[ti][ci].setStatus(status != null ? status : SlotInfo.STATUS_AVAILABLE);
             }
-            // Extract court name if provided
+
             String courtName = getStringValue(slot, "courtName");
             if (courtName != null && ci < courtNames.size()) {
                 courtNames.set(ci, courtName);
             }
-            // Extract price if provided
+
             if (slot.containsKey("price")) {
                 long price = getLongValue(slot, "price");
                 if (price > 0) pricePerSlot = price;
@@ -298,7 +291,7 @@ public class BookingActivity extends AppCompatActivity {
     }
 
     private void buildDemoGrid() {
-        // Dùng danh sách sân từ intent nếu có, không thì fallback demo
+        // Dùng danh sách sân từ intent nếu có
         if (!courtNames.isEmpty()) {
             courtCount = courtNames.size();
         } else {
@@ -341,7 +334,7 @@ public class BookingActivity extends AppCompatActivity {
                 timeLabels.add(String.format(Locale.US, "%02d:%02d", h, mi));
             }
         } catch (Exception e) {
-            // Default fallback
+
             for (int h = 5; h < 23; h++) {
                 timeLabels.add(String.format(Locale.US, "%02d:00", h));
                 timeLabels.add(String.format(Locale.US, "%02d:30", h));
@@ -349,8 +342,6 @@ public class BookingActivity extends AppCompatActivity {
         }
         timeSlotCount = timeLabels.size();
     }
-
-    // ========== Build Grid UI ==========
 
     private void buildGridUI() {
         tableGrid.removeAllViews();
@@ -360,10 +351,9 @@ public class BookingActivity extends AppCompatActivity {
         int timeLabelWidth = dpToPx(56);
         int cellMargin = dpToPx(1);
 
-        // === Header row: corner + court names ===
+
         TableRow headerRow = new TableRow(this);
 
-        // Corner cell (Giờ)
         TextView cornerCell = new TextView(this);
         TableRow.LayoutParams cornerParams = new TableRow.LayoutParams(timeLabelWidth, cellHeight);
         cornerCell.setLayoutParams(cornerParams);
@@ -375,7 +365,7 @@ public class BookingActivity extends AppCompatActivity {
         cornerCell.setBackgroundColor(Color.parseColor("#EEEEEE"));
         headerRow.addView(cornerCell);
 
-        // Court name headers
+        // Header court. Vd: Sân 1, Sân 2, ...
         for (int c = 0; c < courtCount; c++) {
             TextView courtHeader = new TextView(this);
             TableRow.LayoutParams hp = new TableRow.LayoutParams(cellWidth, cellHeight);
@@ -392,11 +382,11 @@ public class BookingActivity extends AppCompatActivity {
         }
         tableGrid.addView(headerRow);
 
-        // === Data rows: time label + slot cells ===
+        //  Loop 2 chiều để hiện thị khung giờ
         for (int t = 0; t < timeSlotCount; t++) {
             TableRow row = new TableRow(this);
 
-            // Time label cell
+            // Hiển thị các khung giờ. Vd: 05:00, ...
             TextView timeLabel = new TextView(this);
             TableRow.LayoutParams tp = new TableRow.LayoutParams(timeLabelWidth, cellHeight);
             tp.setMargins(0, cellMargin, 0, 0);
@@ -409,7 +399,7 @@ public class BookingActivity extends AppCompatActivity {
             timeLabel.setTypeface(null, Typeface.BOLD);
             row.addView(timeLabel);
 
-            // Slot cells
+            // Hiển thị các ô để pick
             for (int c = 0; c < courtCount; c++) {
                 View cell = createSlotCell(t, c, cellWidth, cellHeight);
                 TableRow.LayoutParams cp = (TableRow.LayoutParams) cell.getLayoutParams();
@@ -470,17 +460,16 @@ public class BookingActivity extends AppCompatActivity {
         }
     }
 
-    // ========== Slot selection ==========
-
+    // Click các ô để chọn khung giờ
     private void onSlotClicked(int timeIdx, int courtIdx, TextView cell) {
         SlotInfo slot = slotGrid[timeIdx][courtIdx];
 
-        // Only allow clicking on AVAILABLE slots
+        // Chỉ cho phép click ở những ô chưa có người đặt
         if (!SlotInfo.STATUS_AVAILABLE.equals(slot.getStatus()) && !slot.isSelected()) {
             return;
         }
 
-        // Toggle selection
+        // setup các ô khi đã chọn
         slot.setSelected(!slot.isSelected());
         applySlotStyle(cell, slot);
 
@@ -531,8 +520,7 @@ public class BookingActivity extends AppCompatActivity {
         }
     }
 
-    // ========== Booking confirmation ==========
-
+    // Diaglog xác nhận đặt lịch
     private void showBookingConfirmDialog() {
         List<SlotInfo> selected = getSelectedSlots();
         if (selected.isEmpty()) {
@@ -543,7 +531,6 @@ public class BookingActivity extends AppCompatActivity {
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", new Locale("vi", "VN"));
         String dateStr = sdf.format(selectedDate.getTime());
 
-        // Build summary per court
         Map<Integer, List<SlotInfo>> byCourt = new HashMap<>();
         for (SlotInfo s : selected) {
             int ci = s.getCourtIndex();
@@ -599,16 +586,12 @@ public class BookingActivity extends AppCompatActivity {
         }
     }
 
-    // ========== Submit booking to API ==========
-
     private void submitBooking(List<SlotInfo> selectedSlots) {
         SimpleDateFormat apiDateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
         String dateStr = apiDateFormat.format(selectedDate.getTime());
 
         showLoading(true);
 
-        // Backend BookingRequest: {courtId, bookingDate, startTime, endTime, note}
-        // Gui tung slot mot theo dung format backend
         final int totalSlots = selectedSlots.size();
         final int[] successCount = {0};
         final int[] failCount = {0};
@@ -616,7 +599,6 @@ public class BookingActivity extends AppCompatActivity {
         for (SlotInfo s : selectedSlots) {
             Map<String, Object> body = new HashMap<>();
 
-            // Map courtIndex sang courtId thuc te
             long courtId = 0;
             if (s.getCourtIndex() < courtIds.size()) {
                 courtId = courtIds.get(s.getCourtIndex());
@@ -664,8 +646,6 @@ public class BookingActivity extends AppCompatActivity {
             Toast.makeText(BookingActivity.this, "Đặt lịch thất bại!", Toast.LENGTH_LONG).show();
         }
     }
-
-    // ========== Utility ==========
 
     private int dpToPx(int dp) {
         return (int) TypedValue.applyDimension(

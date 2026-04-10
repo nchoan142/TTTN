@@ -58,7 +58,6 @@ public class LoginActivity extends AppCompatActivity {
         String email = edtEmail.getText().toString().trim();
         String password = edtPassword.getText().toString().trim();
 
-        // Validate empty fields
         if (TextUtils.isEmpty(email)) {
             edtEmail.setError("Vui lòng nhập email");
             edtEmail.requestFocus();
@@ -77,11 +76,10 @@ public class LoginActivity extends AppCompatActivity {
             return;
         }
 
-        // Disable button to prevent double-tap
+        // Tránh double tap
         btnLogin.setEnabled(false);
         btnLogin.setText("Đang đăng nhập...");
 
-        // Call real API
         ApiService apiService = ApiClient.getApiService();
         Map<String, String> body = new HashMap<>();
         body.put("email", email);
@@ -115,7 +113,7 @@ public class LoginActivity extends AppCompatActivity {
                         return;
                     }
 
-                    // Save login info
+                    // Lưu thông tin đăng nhập vào SharedPreferences
                     saveLoginInfo(token, userId, fullName, userEmail, phone, role);
 
                     // Update ApiClient token

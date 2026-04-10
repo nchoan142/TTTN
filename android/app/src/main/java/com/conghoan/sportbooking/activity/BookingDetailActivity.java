@@ -139,7 +139,12 @@ public class BookingDetailActivity extends AppCompatActivity {
 
     private void setupListeners() {
         btnBack.setOnClickListener(v -> finish());
-        btnCancelBooking.setOnClickListener(v -> showCancelConfirmDialog());
+        if (tvStatusLabel.getText().toString().equals("Chờ xác nhận")) {
+            btnCancelBooking.setVisibility(View.VISIBLE);
+            btnCancelBooking.setOnClickListener(v -> showCancelConfirmDialog());
+        } else {
+            btnCancelBooking.setVisibility(View.GONE);
+        }
     }
 
     private void showCancelConfirmDialog() {

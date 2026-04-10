@@ -72,8 +72,7 @@ public class AdminVenueAdapter extends RecyclerView.Adapter<AdminVenueAdapter.Vi
 
         // Toggle button
         holder.btnToggle.setText(active ? "Khoá" : "Mở");
-        holder.btnToggle.setBackgroundTintList(
-                android.content.res.ColorStateList.valueOf(active ? 0xFFEF5350 : 0xFF2E7D32));
+        holder.btnToggle.setBackgroundTintList(android.content.res.ColorStateList.valueOf(active ? 0xFFEF5350 : 0xFF2E7D32));
         holder.btnToggle.setOnClickListener(v -> {
             if (toggleListener != null) {
                 toggleListener.onToggleClick(venue, position);

@@ -18,6 +18,7 @@ import java.util.Map;
 
 public class AdminUserAdapter extends RecyclerView.Adapter<AdminUserAdapter.ViewHolder> {
 
+    // OnUserLongClickListener <=> CallBack
     public interface OnUserLongClickListener {
         void onUserLongClick(Map<String, Object> user, int position);
     }
@@ -37,8 +38,8 @@ public class AdminUserAdapter extends RecyclerView.Adapter<AdminUserAdapter.View
         this.longClickListener = listener;
     }
 
-    public void setDeleteListener(OnUserDeleteListener listener) {
-        this.deleteListener = listener;
+    public void setDeleteListener(OnUserDeleteListener deleteListener) {
+        this.deleteListener = deleteListener;
     }
 
     @NonNull
@@ -74,7 +75,7 @@ public class AdminUserAdapter extends RecyclerView.Adapter<AdminUserAdapter.View
         }
 
         // Role badge
-        holder.tvRole.setText(role);
+        holder.tvUserRole.setText(role);
         int badgeColor;
         int textColor;
         switch (role) {
@@ -94,10 +95,10 @@ public class AdminUserAdapter extends RecyclerView.Adapter<AdminUserAdapter.View
         GradientDrawable badgeBg = new GradientDrawable();
         badgeBg.setColor(badgeColor);
         badgeBg.setCornerRadius(20f);
-        holder.tvRole.setBackground(badgeBg);
-        holder.tvRole.setTextColor(textColor);
+        holder.tvUserRole.setBackground(badgeBg);
+        holder.tvUserRole.setTextColor(textColor);
 
-        // Long press
+        // Long-press để thay đổi role của các user
         holder.itemView.setOnLongClickListener(v -> {
             if (longClickListener != null) {
                 longClickListener.onUserLongClick(user, position);
@@ -112,7 +113,7 @@ public class AdminUserAdapter extends RecyclerView.Adapter<AdminUserAdapter.View
             }
         });
 
-        // Hide delete for ADMIN role
+        // Ẩn button delete user nếu role là ADMIN
         if ("ADMIN".equals(role)) {
             holder.btnDelete.setVisibility(View.GONE);
         } else {
@@ -131,7 +132,7 @@ public class AdminUserAdapter extends RecyclerView.Adapter<AdminUserAdapter.View
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView tvInitials, tvName, tvEmail, tvPhone, tvRole;
+        TextView tvInitials, tvName, tvEmail, tvPhone, tvUserRole;
         ImageButton btnDelete;
 
         public ViewHolder(@NonNull View itemView) {
@@ -140,7 +141,7 @@ public class AdminUserAdapter extends RecyclerView.Adapter<AdminUserAdapter.View
             tvName = itemView.findViewById(R.id.tv_user_name);
             tvEmail = itemView.findViewById(R.id.tv_user_email);
             tvPhone = itemView.findViewById(R.id.tv_user_phone);
-            tvRole = itemView.findViewById(R.id.tv_user_role);
+            tvUserRole = itemView.findViewById(R.id.tv_user_role);
             btnDelete = itemView.findViewById(R.id.btn_delete_user);
         }
     }

@@ -46,7 +46,7 @@ public class ExploreActivity extends AppCompatActivity {
     private TextView chipAll, chipPickleball, chipBadminton, chipFootball,
             chipTennis, chipVolleyball, chipBasketball;
     private TextView[] categoryChips;
-    private String selectedCategory = null; // null = Tất cả
+    private String selectedCategory = null;
 
     // Sort chips
     private TextView sortRating, sortPrice, sortNearest;
@@ -89,7 +89,6 @@ public class ExploreActivity extends AppCompatActivity {
 
         sortChips = new TextView[]{sortRating, sortPrice, sortNearest};
 
-        // Nút quay lại
         findViewById(R.id.btn_back).setOnClickListener(v -> finish());
     }
 
@@ -98,8 +97,6 @@ public class ExploreActivity extends AppCompatActivity {
         rvVenues.setLayoutManager(new LinearLayoutManager(this));
         rvVenues.setAdapter(venueAdapter);
     }
-
-    // ========== Category Chips ==========
 
     private void setupCategoryChips() {
         String[] categoryNames = {null, "Pickleball", "Cầu lông", "Bóng đá",
@@ -126,8 +123,6 @@ public class ExploreActivity extends AppCompatActivity {
             }
         }
     }
-
-    // ========== Sort Chips ==========
 
     private void setupSortChips() {
         sortRating.setOnClickListener(v -> {
@@ -159,12 +154,8 @@ public class ExploreActivity extends AppCompatActivity {
         }
     }
 
-    // ========== Filter & Sort ==========
-
     private void applyFilterAndSort() {
         displayedVenues.clear();
-
-        // Filter by category
         if (selectedCategory == null) {
             displayedVenues.addAll(allVenues);
         } else {
@@ -176,7 +167,6 @@ public class ExploreActivity extends AppCompatActivity {
             }
         }
 
-        // Sort
         switch (selectedSort) {
             case 0: // Đánh giá cao nhất
                 Collections.sort(displayedVenues, (a, b) ->
@@ -203,8 +193,6 @@ public class ExploreActivity extends AppCompatActivity {
             rvVenues.setVisibility(View.VISIBLE);
         }
     }
-
-    // ========== API ==========
 
     private void loadVenuesFromApi() {
         showLoading(true);
@@ -287,8 +275,6 @@ public class ExploreActivity extends AppCompatActivity {
             return null;
         }
     }
-
-    // ========== Utility ==========
 
     private void showLoading(boolean show) {
         if (progressBar != null) {
