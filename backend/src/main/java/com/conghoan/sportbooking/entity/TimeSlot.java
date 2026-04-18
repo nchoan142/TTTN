@@ -42,6 +42,6 @@ public class TimeSlot {
     private Booking booking;
 
     public enum SlotStatus {
-        AVAILABLE, BOOKED, LOCKED, EVENT
+        AVAILABLE, PENDING, BOOKED, LOCKED, EVENT
     }
 }

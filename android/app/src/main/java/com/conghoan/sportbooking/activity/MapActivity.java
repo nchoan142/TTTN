@@ -62,7 +62,6 @@ public class MapActivity extends AppCompatActivity {
         progressBar = findViewById(R.id.progress_bar);
         llEmpty = findViewById(R.id.ll_empty);
 
-        // Nút quay lại
         findViewById(R.id.btn_back).setOnClickListener(v -> finish());
     }
 
@@ -87,6 +86,9 @@ public class MapActivity extends AppCompatActivity {
         });
     }
 
+    // Nếu ô tìm kiếm trống, sẽ hiển thị toàn bộ sân
+    // Nếu có từ khóa sẽ duyệt qua danh sách sân
+    // để hiển thị sân đúng với từ khóa
     private void filterVenues(String query) {
         displayedVenues.clear();
         if (query == null || query.trim().isEmpty()) {
@@ -107,6 +109,8 @@ public class MapActivity extends AppCompatActivity {
         updateEmptyState();
     }
 
+    // Nếu không có sân nào trùng với từ khóa thì sẽ hiển thị
+    // thông báo "Không tìm thấy địa điểm nào"
     private void updateEmptyState() {
         if (displayedVenues.isEmpty()) {
             llEmpty.setVisibility(View.VISIBLE);
@@ -117,7 +121,6 @@ public class MapActivity extends AppCompatActivity {
         }
     }
 
-    // ========== API ==========
 
     private void loadVenuesFromApi() {
         showLoading(true);
@@ -206,8 +209,6 @@ public class MapActivity extends AppCompatActivity {
             return null;
         }
     }
-
-    // ========== Utility ==========
 
     private void showLoading(boolean show) {
         if (progressBar != null) {

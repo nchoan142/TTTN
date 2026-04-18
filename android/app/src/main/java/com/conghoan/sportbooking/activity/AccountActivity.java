@@ -61,17 +61,17 @@ public class AccountActivity extends AppCompatActivity {
         btnBack = findViewById(R.id.btn_back);
     }
 
+    // Lấy thông tin của User được lưu trong SharedPreferences
+    // và hiển thị lên giao diện
     private void loadUserInfo() {
         SharedPreferences prefs = getSharedPreferences(PREF_NAME, MODE_PRIVATE);
         String fullName = prefs.getString("fullName", "");
         String email = prefs.getString("email", "");
         String phone = prefs.getString("phone", "");
 
-        // Set header info
         tvHeaderName.setText(!TextUtils.isEmpty(fullName) ? fullName : "Người dùng");
         tvHeaderEmail.setText(!TextUtils.isEmpty(email) ? email : "");
 
-        // Set avatar initials
         if (!TextUtils.isEmpty(fullName)) {
             String initials = getInitials(fullName);
             tvAvatarInitials.setText(initials);
@@ -79,7 +79,6 @@ public class AccountActivity extends AppCompatActivity {
             tvAvatarInitials.setText("U");
         }
 
-        // Set form fields
         etFullName.setText(fullName);
         etEmail.setText(email);
         etPhone.setText(phone);
@@ -93,6 +92,9 @@ public class AccountActivity extends AppCompatActivity {
         }
     }
 
+    // Lấy các ký tự đầu tiên của họ và tên
+    // để hiện thị lên avatar
+    // VD: Nguyễn Công Hoàn -> NH
     private String getInitials(String fullName) {
         String[] parts = fullName.trim().split("\\s+");
         if (parts.length >= 2) {
@@ -103,6 +105,7 @@ public class AccountActivity extends AppCompatActivity {
         return "U";
     }
 
+    // Xử lý sự kiện cho các button
     private void setupListeners() {
         btnBack.setOnClickListener(v -> finish());
 
@@ -117,13 +120,17 @@ public class AccountActivity extends AppCompatActivity {
         btnLogout.setOnClickListener(v -> showLogoutConfirmation());
     }
 
+    // Update thông tin người dùng như
+    // họ tên và số điện thoại
     private void performUpdateProfile() {
         String fullName = etFullName.getText().toString().trim();
-        String email = etEmail.getText().toString().trim();
+//        String email = etEmail.getText().toString().trim();
         String phone = etPhone.getText().toString().trim();
 
         // Validate
-        if (TextUtils.isEmpty(fullName) || TextUtils.isEmpty(email) || TextUtils.isEmpty(phone)) {
+        // validate thêm TextUtils.isEmpty(email)
+        // nếu muốn thay đổi email của user
+        if (TextUtils.isEmpty(fullName) || TextUtils.isEmpty(phone)) {
             Toast.makeText(this, "Vui lòng nhập đầy đủ thông tin", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -131,7 +138,7 @@ public class AccountActivity extends AppCompatActivity {
         // Chuẩn bị Body (ở đây là 1 Map)
         Map<String, String> body = new HashMap<>();
         body.put("fullName", fullName);
-        body.put("email", email);
+//        body.put("email", email);
         body.put("phone", phone);
 
         // Gọi API
@@ -142,7 +149,7 @@ public class AccountActivity extends AppCompatActivity {
                     //Cập nhật thành công, lưu lại vào SharedPreferences
                     SharedPreferences.Editor editor = getSharedPreferences(PREF_NAME, MODE_PRIVATE).edit();
                     editor.putString("fullName", fullName);
-                    editor.putString("email", email);
+//                    editor.putString("email", email);
                     editor.putString("phone", phone);
                     editor.apply();
 
@@ -161,6 +168,8 @@ public class AccountActivity extends AppCompatActivity {
         });
     }
 
+    // Hiển thị dialog để thay đổi mật khẩu
+    // khi click vào button đổi mật khẩu
     private void showChangePasswordDialog() {
         View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_change_password, null);
         EditText etOld = dialogView.findViewById(R.id.et_old_password);
@@ -239,18 +248,18 @@ public class AccountActivity extends AppCompatActivity {
                 .show();
     }
 
+    // Xóa dữ liệu đã lưu trong SharedPreferences
+    // reset trạng thái của ApiClient
+    // và quay về màn hình Login
     private void performLogout() {
-        // Clear SharedPreferences
         SharedPreferences.Editor editor = getSharedPreferences(PREF_NAME, MODE_PRIVATE).edit();
         editor.clear();
         editor.apply();
 
-        // Reset ApiClient
         ApiClient.resetClient();
 
         Toast.makeText(this, "Đã đăng xuất", Toast.LENGTH_SHORT).show();
 
-        // Navigate to LoginActivity
         Intent intent = new Intent(this, LoginActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);

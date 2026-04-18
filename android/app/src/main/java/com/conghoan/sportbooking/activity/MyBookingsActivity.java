@@ -159,7 +159,6 @@ public class MyBookingsActivity extends AppCompatActivity {
         }
     }
 
-    // --- API: Load bookings ---
     private void loadBookingsFromApi() {
         // Hiện loading lần đầu (nếu chưa có dữ liệu)
         if (allBookings.isEmpty()) {
@@ -192,6 +191,7 @@ public class MyBookingsActivity extends AppCompatActivity {
                     Toast.makeText(MyBookingsActivity.this, "Không thể tải lịch đặt", Toast.LENGTH_SHORT).show();
                     updateEmptyState();
                 }
+                Log.d("MyBookingsActivity", "Bookings: " + allBookings.size());
             }
 
             @Override
@@ -248,7 +248,6 @@ public class MyBookingsActivity extends AppCompatActivity {
         }
     }
 
-    // --- Hủy booking qua API ---
     private void showCancelConfirmDialog(BookingItem booking, int position) {
         new AlertDialog.Builder(this)
                 .setTitle("Hủy đặt lịch")
@@ -289,7 +288,6 @@ public class MyBookingsActivity extends AppCompatActivity {
         });
     }
 
-    // --- Tiện ích ---
     private void showLoading(boolean show) {
         if (progressBar != null) {
             progressBar.setVisibility(show ? View.VISIBLE : View.GONE);

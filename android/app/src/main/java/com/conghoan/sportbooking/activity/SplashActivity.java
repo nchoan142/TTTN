@@ -31,8 +31,9 @@ public class SplashActivity extends AppCompatActivity {
         String token = prefs.getString(KEY_TOKEN, null);
 
         Intent intent;
+        // Nếu có token thì sẽ lưu token vào ApiClient, những lần mở app sau
+        // sẽ tự động chuyển tới MainActivity
         if (!TextUtils.isEmpty(token)) {
-            // Load token into ApiClient for authenticated requests
             ApiClient.setAuthToken(token);
             intent = new Intent(this, MainActivity.class);
         } else {

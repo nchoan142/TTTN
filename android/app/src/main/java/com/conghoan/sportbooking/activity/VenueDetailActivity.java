@@ -130,7 +130,7 @@ public class VenueDetailActivity extends AppCompatActivity {
             btnBack.setOnClickListener(v -> finish());
         }
         if (tvVenueName != null) {
-            tvVenueName.setText(venueName != null ? venueName : "Chi ti\u1EBFt s\u00E2n");
+            tvVenueName.setText(venueName != null ? venueName : "Chi tiết sân");
         }
     }
 
@@ -140,10 +140,10 @@ public class VenueDetailActivity extends AppCompatActivity {
         if (tvAddress != null) tvAddress.setText(address != null ? address : "");
         if (tvOpenTime != null) {
             tvOpenTime.setText((openTime != null ? openTime : "06:00")
-                    + " - " + (closeTime != null ? closeTime : "22:00") + " (T\u1EA5t c\u1EA3 c\u00E1c ng\u00E0y)");
+                    + " - " + (closeTime != null ? closeTime : "22:00") + " (Tất cả các ngày)");
         }
         if (tvPhone != null) tvPhone.setText(phone != null ? phone : "-");
-        if (tvRating != null) tvRating.setText(String.format("%.1f (\u0111\u00E1nh gi\u00E1)", rating));
+        if (tvRating != null) tvRating.setText(String.format("%.1f (đánh giá)", rating));
         if (tvReviewRating != null) tvReviewRating.setText(String.format("%.1f", rating));
         if (tvReviewCount != null) tvReviewCount.setText("(0)");
         if (tvPrice != null) tvPrice.setText("--");
@@ -162,14 +162,14 @@ public class VenueDetailActivity extends AppCompatActivity {
                     }
                     parseAndDisplay(data);
                 } else {
-                    Log.w(TAG, "API tr\u1EA3 v\u1EC1 l\u1ED7i: " + response.code());
+                    Log.w(TAG, "API trả về lỗi: " + response.code());
                     // Gi\u1EEF nguy\u00EAn d\u1EEF li\u1EC7u t\u1EEB intent
                 }
             }
 
             @Override
             public void onFailure(Call<Map<String, Object>> call, Throwable t) {
-                Log.e(TAG, "L\u1ED7i g\u1ECDi API: " + t.getMessage());
+                Log.e(TAG, "Lỗi gọi API: " + t.getMessage());
                 // Gi\u1EEF nguy\u00EAn d\u1EEF li\u1EC7u t\u1EEB intent nh\u01B0 fallback
             }
         });
@@ -223,7 +223,7 @@ public class VenueDetailActivity extends AppCompatActivity {
         }
         if (tvOpenTime != null) {
             tvOpenTime.setText((openTime != null ? openTime : "06:00")
-                    + " - " + (closeTime != null ? closeTime : "22:00") + " (T\u1EA5t c\u1EA3 c\u00E1c ng\u00E0y)");
+                    + " - " + (closeTime != null ? closeTime : "22:00") + " (Tất cả các ngày)");
         }
 
         // Rating
@@ -242,7 +242,7 @@ public class VenueDetailActivity extends AppCompatActivity {
         }
 
         if (tvRating != null) {
-            tvRating.setText(String.format("%.1f (%d \u0111\u00E1nh gi\u00E1)", rating, ratingCount));
+            tvRating.setText(String.format("%.1f (%d đánh giá)", rating, ratingCount));
         }
         if (tvReviewRating != null) {
             tvReviewRating.setText(String.format("%.1f", rating));
@@ -251,7 +251,7 @@ public class VenueDetailActivity extends AppCompatActivity {
             tvReviewCount.setText(String.format("(%d)", ratingCount));
         }
 
-        // Gi\u00E1 thu\u00EA s\u00E2n
+        // Giá thuê sân
         if (data.containsKey("pricePerSlot")) {
             Object priceObj = data.get("pricePerSlot");
             if (priceObj instanceof Number) {
@@ -261,13 +261,13 @@ public class VenueDetailActivity extends AppCompatActivity {
         if (tvPrice != null) {
             if (pricePerSlot > 0) {
                 NumberFormat nf = NumberFormat.getInstance(new Locale("vi", "VN"));
-                tvPrice.setText(nf.format((long) pricePerSlot) + "\u0111 / slot");
+                tvPrice.setText(nf.format((long) pricePerSlot) + "đ / slot");
             } else {
-                tvPrice.setText("Li\u00EAn h\u1EC7");
+                tvPrice.setText("Liên hệ");
             }
         }
 
-        // Danh s\u00E1ch s\u00E2n con (courts)
+        // Danh sách sân con (courts)
         if (data.containsKey("courts")) {
             Object courtsObj = data.get("courts");
             if (courtsObj instanceof List) {
@@ -284,10 +284,11 @@ public class VenueDetailActivity extends AppCompatActivity {
             }
         }
 
-        // Reviews visibility duoc quan ly boi loadReviews()
         updateReviewsVisibility();
     }
 
+    // Hiển thị các sân ứng với môn thể thao
+    // Ví dụ: sân 1, sân 2, ...
     private void displayCourts() {
         if (chipGroupCourts == null) return;
 
@@ -295,20 +296,20 @@ public class VenueDetailActivity extends AppCompatActivity {
 
         if (courtsList.isEmpty()) {
             if (tvCourtsEmpty != null) {
-                tvCourtsEmpty.setText("Ch\u01B0a c\u00F3 s\u00E2n n\u00E0o");
+                tvCourtsEmpty.setText("Chưa có sân nào");
                 tvCourtsEmpty.setVisibility(View.VISIBLE);
             }
-            if (tvCourtCount != null) tvCourtCount.setText("0 s\u00E2n");
+            if (tvCourtCount != null) tvCourtCount.setText("0 sân");
             return;
         }
 
         if (tvCourtsEmpty != null) tvCourtsEmpty.setVisibility(View.GONE);
-        if (tvCourtCount != null) tvCourtCount.setText(courtsList.size() + " s\u00E2n");
+        if (tvCourtCount != null) tvCourtCount.setText(courtsList.size() + " sân");
 
         for (int i = 0; i < courtsList.size(); i++) {
             Map<String, Object> court = courtsList.get(i);
 
-            String courtName = "S\u00E2n " + (i + 1);
+            String courtName = "Sân " + (i + 1);
             if (court.containsKey("name")) {
                 courtName = String.valueOf(court.get("name"));
             }
@@ -361,6 +362,7 @@ public class VenueDetailActivity extends AppCompatActivity {
         });
     }
 
+    // Nếu sân có đánh giá (review) thì hiển thị đánh giá đó
     private void updateReviewsVisibility() {
         if (reviewsList.isEmpty()) {
             if (tvReviewsEmpty != null) tvReviewsEmpty.setVisibility(View.VISIBLE);
@@ -369,26 +371,23 @@ public class VenueDetailActivity extends AppCompatActivity {
             if (tvReviewsEmpty != null) tvReviewsEmpty.setVisibility(View.GONE);
             if (rvReviews != null) rvReviews.setVisibility(View.VISIBLE);
         }
-        // Cap nhat so luong review
+        // Cập nhật số lượng review
         if (tvReviewCount != null) {
             tvReviewCount.setText(String.format("(%d)", reviewsList.size()));
         }
     }
 
     private void showWriteReviewDialog() {
-        // Tao layout dong cho dialog
         android.widget.LinearLayout layout = new android.widget.LinearLayout(this);
         layout.setOrientation(android.widget.LinearLayout.VERTICAL);
         layout.setPadding(48, 32, 48, 16);
 
-        // Label
         TextView tvLabel = new TextView(this);
         tvLabel.setText("Đánh giá của bạn");
         tvLabel.setTextSize(14);
         tvLabel.setTextColor(0xFF424242);
         layout.addView(tvLabel);
 
-        // RatingBar
         RatingBar ratingBar = new RatingBar(this);
         ratingBar.setNumStars(5);
         ratingBar.setStepSize(1.0f);
@@ -402,14 +401,12 @@ public class VenueDetailActivity extends AppCompatActivity {
         ratingBar.setLayoutParams(ratingParams);
         layout.addView(ratingBar);
 
-        // Label comment
         TextView tvCommentLabel = new TextView(this);
         tvCommentLabel.setText("Nhận xét");
         tvCommentLabel.setTextSize(14);
         tvCommentLabel.setTextColor(0xFF424242);
         layout.addView(tvCommentLabel);
 
-        // EditText comment
         EditText etComment = new EditText(this);
         etComment.setHint("Chia sẻ trải nghiệm của bạn...");
         etComment.setMinLines(3);
@@ -457,7 +454,7 @@ public class VenueDetailActivity extends AppCompatActivity {
                     if (successObj instanceof Boolean && (Boolean) successObj) {
                         Toast.makeText(VenueDetailActivity.this,
                                 "Đánh giá thành công", Toast.LENGTH_SHORT).show();
-                        // Reload reviews
+
                         loadReviews();
                     } else {
                         String message = responseBody.containsKey("message")
@@ -491,7 +488,6 @@ public class VenueDetailActivity extends AppCompatActivity {
             if (closeTime != null) intent.putExtra("closeTime", closeTime);
             if (pricePerSlot > 0) intent.putExtra("pricePerSlot", (long) pricePerSlot);
 
-            // Truyền danh sách sân con
             if (!courtsList.isEmpty()) {
                 ArrayList<Long> courtIds = new ArrayList<>();
                 ArrayList<String> courtNames = new ArrayList<>();
@@ -503,7 +499,7 @@ public class VenueDetailActivity extends AppCompatActivity {
                             courtIds.add(((Number) idObj).longValue());
                         }
                     }
-                    // Court name
+
                     if (court.containsKey("name")) {
                         courtNames.add(String.valueOf(court.get("name")));
                     }

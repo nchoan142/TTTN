@@ -5,13 +5,11 @@
     android:layout_height="match_parent"
     android:background="@color/bg_screen">
 
-    <!-- Nội dung chính -->
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:paddingBottom="64dp">
 
-        <!-- Header xanh lá 180dp -->
         <FrameLayout
             android:id="@+id/fl_header"
             android:layout_width="match_parent"
@@ -19,7 +17,6 @@
             android:layout_alignParentTop="true"
             android:background="@drawable/bg_header_green">
 
-            <!-- Vòng tròn trang trí góc trên phải -->
             <View
                 android:layout_width="150dp"
                 android:layout_height="150dp"
@@ -28,7 +25,6 @@
                 android:layout_marginEnd="-30dp"
                 android:background="@drawable/bg_circle_white_15" />
 
-            <!-- Vòng tròn trang trí nhỏ hơn góc trên phải -->
             <View
                 android:layout_width="80dp"
                 android:layout_height="80dp"
@@ -47,7 +43,6 @@
                 android:paddingBottom="12dp"
                 android:gravity="center_vertical">
 
-                <!-- Row chào hỏi: avatar + ngày/tên -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -55,7 +50,6 @@
                     android:gravity="center_vertical"
                     android:layout_marginBottom="14dp">
 
-                    <!-- Avatar người dùng -->
                     <ImageView
                         android:id="@+id/iv_avatar"
                         android:layout_width="44dp"
@@ -66,7 +60,6 @@
                         android:contentDescription="Avatar"
                         android:scaleType="centerCrop" />
 
-                    <!-- Ngày + tên -->
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
@@ -93,7 +86,6 @@
 
                     </LinearLayout>
 
-                    <!-- Nút thông báo -->
                     <ImageButton
                         android:id="@+id/btn_notification"
                         android:layout_width="40dp"
@@ -140,7 +132,6 @@
 
         </FrameLayout>
 
-        <!-- Nội dung cuộn bên dưới header -->
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -204,7 +195,6 @@
 
                 </LinearLayout>
 
-                <!-- Divider -->
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
@@ -214,7 +204,6 @@
                     android:layout_marginEnd="16dp"
                     android:background="#F0F0F0" />
 
-                <!-- Tiêu đề section sân -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -249,7 +238,6 @@
 
                     </LinearLayout>
 
-                    <!-- Nút lọc -->
                     <ImageButton
                         android:id="@+id/btn_filter"
                         android:layout_width="38dp"
@@ -261,7 +249,6 @@
 
                 </LinearLayout>
 
-                <!-- RecyclerView danh sách sân dọc -->
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rv_venues"
                     android:layout_width="match_parent"
@@ -280,7 +267,6 @@
 
     </RelativeLayout>
 
-    <!-- Loading indicator -->
     <ProgressBar
         android:id="@+id/progress_bar"
         android:layout_width="wrap_content"
@@ -289,7 +275,6 @@
         android:visibility="gone"
         android:indeterminateTint="@color/green_primary" />
 
-    <!-- BottomNavigationView cố định ở dưới -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_nav"
         android:layout_width="match_parent"

@@ -156,6 +156,7 @@ public class BookingDetailActivity extends AppCompatActivity {
                 .show();
     }
 
+    // update trạng thái (status) khi huỷ đặt lịch
     private void cancelBooking() {
         apiService.cancelBooking(bookingId).enqueue(new Callback<Map<String, Object>>() {
             @Override

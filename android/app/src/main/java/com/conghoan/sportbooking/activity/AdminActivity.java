@@ -53,7 +53,6 @@ public class AdminActivity extends AppCompatActivity {
 
     private ApiService apiService;
     private int currentTab = TAB_USERS;
-
     private List<Map<String, Object>> userList = new ArrayList<>();
     private List<Map<String, Object>> venueList = new ArrayList<>();
     private List<Map<String, Object>> bookingList = new ArrayList<>();
@@ -99,22 +98,21 @@ public class AdminActivity extends AppCompatActivity {
         rvList.setLayoutManager(new LinearLayoutManager(this));
     }
 
+    // Khởi tạo các adapter
+    // và xử lý các sự kiện của adapter đó
+    // các Listener của các adapter hoạt động tương tự các callback
     private void setupAdapters() {
-        // User adapter with role change + delete
         adminUserAdapter = new AdminUserAdapter(this, userList, (user, position) -> showRoleDialog(user, position));
         adminUserAdapter.setDeleteListener((user, position) -> showDeleteUserDialog(user, position));
 
-        // Venue adapter with toggle
         adminVenueAdapter = new AdminVenueAdapter(this, venueList, (venue, position) -> toggleVenue(venue, position));
-        adminVenueAdapter.setOnVenueDeleteListener((venue, position) -> deleteVenueApi(venue, position));
+        adminVenueAdapter.setOnVenueDeleteListener((venue, position) -> deleteVenue(venue, position));
 
-        // Booking adapter with confirm + detail click
         adminBookingAdapter = new AdminBookingAdapter(this, bookingList);
-        adminBookingAdapter.setConfirmListener((booking, position) -> confirmBooking(booking, position));
+        adminBookingAdapter.setConfirmListener((booking, position) -> confirmBookingDialog(booking, position));
         adminBookingAdapter.setClickListener((booking, position) -> showBookingDetailDialog(booking));
-        adminBookingAdapter.setCancelListener((booking, position) -> showCancelBookingConfirmDialog(booking, position));
+        adminBookingAdapter.setCancelListener((booking, position) -> showCancelBookingDialog(booking, position));
 
-        // Category adapter with edit + delete
         adminCategoryAdapter = new AdminCategoryAdapter(this, categoryList, new AdminCategoryAdapter.OnCategoryActionListener() {
             @Override
             public void onEditClick(Map<String, Object> category, int position) {
@@ -144,16 +142,15 @@ public class AdminActivity extends AppCompatActivity {
         });
     }
 
+    // Chuyển tab và hiển thị danh sách phù hợp
     private void switchTab(int tab) {
         currentTab = tab;
-
-        // Update tab button styles
         setTabActive(btnTabUsers, tab == TAB_USERS);
         setTabActive(btnTabVenues, tab == TAB_VENUES);
         setTabActive(btnTabBookings, tab == TAB_BOOKINGS);
         setTabActive(btnTabCategories, tab == TAB_CATEGORIES);
 
-        // Show/hide FAB - cho tab Sân và Danh mục
+        // Hiển thị nút add cho tab Category và Venue
         faBtnAdd.setVisibility((tab == TAB_CATEGORIES || tab == TAB_VENUES) ? View.VISIBLE : View.GONE);
 
         switch (tab) {
@@ -186,7 +183,8 @@ public class AdminActivity extends AppCompatActivity {
         }
     }
 
-    // Load Stats cho UI
+    // Lấy dữ liệu từ API và hiển thị lên UI
+    // Ví dụ Số lượng user, sân thể thao, doanh thu, lịch đặt
     private void loadStats() {
         apiService.getAdminStats().enqueue(new Callback<Map<String, Object>>() {
             @Override
@@ -272,7 +270,7 @@ public class AdminActivity extends AppCompatActivity {
         });
     }
 
-    // Load danh sách Bookingđã có cho UI
+    // Load danh sách Booking đã có cho UI
     private void loadBookings() {
         showLoading(true);
         apiService.getAdminBookings().enqueue(new Callback<Map<String, Object>>() {
@@ -328,8 +326,7 @@ public class AdminActivity extends AppCompatActivity {
         });
     }
 
-    // ============ ROLE DIALOG ============
-
+    // Hiển thị dialog đổi role khi nhấn giữ vào User trong tab Người dùng
     private void showRoleDialog(Map<String, Object> user, int position) {
         String currentRole = user.get("role") != null ? user.get("role").toString() : "USER";
         String userName = user.get("fullName") != null ? user.get("fullName").toString() : "N/A";
@@ -357,6 +354,7 @@ public class AdminActivity extends AppCompatActivity {
                 .show();
     }
 
+    // Update role của user vào database
     private void updateUserRole(Map<String, Object> user, int position, String newRole) {
         long userId = getLongId(user);
         if (userId == -1) {
@@ -387,8 +385,7 @@ public class AdminActivity extends AppCompatActivity {
         });
     }
 
-    // ============ DELETE USER ============
-
+    // Hiển thị dialog khi click vào nút xóa user
     private void showDeleteUserDialog(Map<String, Object> user, int position) {
         String userName = user.get("fullName") != null ? user.get("fullName").toString() : "N/A";
 
@@ -400,6 +397,7 @@ public class AdminActivity extends AppCompatActivity {
                 .show();
     }
 
+    // Xóa user khỏi database
     private void deleteUser(Map<String, Object> user, int position) {
         long userId = getLongId(user);
         if (userId == -1) {
@@ -429,8 +427,8 @@ public class AdminActivity extends AppCompatActivity {
         });
     }
 
-    // ============ TOGGLE VENUE ============
-
+    // Thay đổi trạng thái của sân thể thao
+    // khi khóa sân thể thao, thì sân đó sẽ không hiển thị trong danh sách
     private void toggleVenue(Map<String, Object> venue, int position) {
         long venueId = getLongId(venue);
         if (venueId == -1) {
@@ -459,9 +457,9 @@ public class AdminActivity extends AppCompatActivity {
         });
     }
 
-    // ============ CONFIRM BOOKING ============
-
-    private void confirmBooking(Map<String, Object> booking, int position) {
+    // Gửi yêu cầu CONFIRM tới backend
+    // nếu thành công thì sẽ chuyển status trong bảng bookings thành CONFIRMED
+    private void confirmBookingDialog(Map<String, Object> booking, int position) {
         long bookingId = getLongId(booking);
         if (bookingId == -1) {
             Toast.makeText(this, "Lỗi: Không xác định được ID lịch đặt", Toast.LENGTH_SHORT).show();
@@ -497,9 +495,10 @@ public class AdminActivity extends AppCompatActivity {
                 .show();
     }
 
-    // ============ CANCEL BOOKING (admin) ============
-
-    private void showCancelBookingConfirmDialog(Map<String, Object> booking, int position) {
+    // Hiển thị dialog hủy booking khi click vào nút huỷ lịch
+    // Khi xác nhận hủy lịch, thay đổi status trong bảng bookings
+    // thành CANCELLED
+    private void showCancelBookingDialog(Map<String, Object> booking, int position) {
         long bookingId = getLongId(booking);
         if (bookingId == -1) {
             Toast.makeText(this, "Lỗi: Không xác định được ID lịch đặt", Toast.LENGTH_SHORT).show();
@@ -536,9 +535,7 @@ public class AdminActivity extends AppCompatActivity {
                 .show();
     }
 
-    // ============ BOOKING DETAIL DIALOG ============
-
-    @SuppressWarnings("unchecked")
+    // Hiển thị dialog chi tiết lịch đặt khi click vào 1 booking
     private void showBookingDetailDialog(Map<String, Object> booking) {
         // User info
         String userName = "";
@@ -721,7 +718,10 @@ public class AdminActivity extends AppCompatActivity {
         });
     }
 
-    private void deleteVenueApi(Map<String, Object> venue, int position) {
+    // Giữ item sân thể thao sẽ hiển thị dialog để xác nhận
+    // xóa sân thể thao
+    // Xóa sân thể thao khỏi database
+    private void deleteVenue(Map<String, Object> venue, int position) {
         Object idObj = venue.get("id");
         long venueId;
         if (idObj instanceof Number) venueId = ((Number) idObj).longValue();
@@ -808,6 +808,7 @@ public class AdminActivity extends AppCompatActivity {
                 .show();
     }
 
+    // Hiển thị dialog, sửa thông tin của danh mục (Category)
     private void showEditCategoryDialog(Map<String, Object> category, int position) {
         String currentName = getStr(category, "name");
         String currentIconUrl = getStr(category, "iconUrl");
@@ -874,6 +875,7 @@ public class AdminActivity extends AppCompatActivity {
                 .show();
     }
 
+    // Hiển thị dialog, xóa danh mục (Category)
     private void showDeleteCategoryDialog(Map<String, Object> category, int position) {
         String name = getStr(category, "name");
 

@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
@@ -119,6 +120,7 @@ public class BookingActivity extends AppCompatActivity {
         }
     }
 
+    // Setup default date là hôm nay
     private void setupDateDefault() {
         selectedDate = Calendar.getInstance();
         updateDateDisplay();
@@ -149,6 +151,8 @@ public class BookingActivity extends AppCompatActivity {
                 today.set(Calendar.MILLISECOND, 0);
                 Calendar prevDay = (Calendar) selectedDate.clone();
                 prevDay.add(Calendar.DAY_OF_MONTH, -1);
+                // Nếu prevDay là ngày trong quá khứ
+                // thì sẽ không thể back lại
                 if (!prevDay.before(today)) {
                     selectedDate.add(Calendar.DAY_OF_MONTH, -1);
                     updateDateDisplay();
@@ -193,6 +197,7 @@ public class BookingActivity extends AppCompatActivity {
         tableGrid.removeAllViews();
         clearSelection();
 
+        // Lấy danh sách slot theo sân và ngày
         apiService.getVenueSlots(venueId, dateStr).enqueue(new Callback<Map<String, Object>>() {
             @Override
             public void onResponse(Call<Map<String, Object>> call, Response<Map<String, Object>> response) {
@@ -241,6 +246,8 @@ public class BookingActivity extends AppCompatActivity {
         courtCount = maxCourt + 1;
         timeSlotCount = maxTime + 1;
 
+        // Nếu dữ liệu từ API trả về rỗng
+        // thì sẽ build mảng rỗng để hiển thị
         if (courtCount == 0 || timeSlotCount == 0) {
             buildDemoGrid();
             return;
@@ -259,7 +266,7 @@ public class BookingActivity extends AppCompatActivity {
 
         buildTimeLabels();
 
-        // Tạo array 2 chiều để lưu trạng thái slot
+        // Array 2 chiều, tất cả các ô đều ở trạng thái AVAILABLE
         slotGrid = new SlotInfo[timeSlotCount][courtCount];
         for (int t = 0; t < timeSlotCount; t++) {
             for (int c = 0; c < courtCount; c++) {
@@ -267,13 +274,23 @@ public class BookingActivity extends AppCompatActivity {
             }
         }
 
-        // Fill from API data
+        // Nếu sân chưa có người đặt thì trạng thái là AVAILABLE
+        // Nếu sân đã có người đặt trạng thái là BOOKED
         for (Map<String, Object> slot : slots) {
             int ci = getIntValue(slot, "courtIndex");
             int ti = getIntValue(slot, "timeIndex");
             String status = getStringValue(slot, "status");
+
+            Log.d("CheckStatus", "Ô [" + ti + "][" + ci + "] có status là: " + status);
+
             if (ti < timeSlotCount && ci < courtCount) {
-                slotGrid[ti][ci].setStatus(status != null ? status : SlotInfo.STATUS_AVAILABLE);
+                // Nếu status trả về từ backend là CONFIRMED (đã xác nhận)
+                // set ô đó là màu đỏ
+                if ("CONFIRMED".equals(status) || "BOOKED".equals(status)) {
+                    slotGrid[ti][ci].setStatus(SlotInfo.STATUS_BOOKED);
+                } else {
+                    slotGrid[ti][ci].setStatus(status != null ? status : SlotInfo.STATUS_AVAILABLE);
+                }
             }
 
             String courtName = getStringValue(slot, "courtName");
@@ -290,6 +307,8 @@ public class BookingActivity extends AppCompatActivity {
         buildGridUI();
     }
 
+
+    // Tạo mảng 2 chiều (grid) rỗng
     private void buildDemoGrid() {
         // Dùng danh sách sân từ intent nếu có
         if (!courtNames.isEmpty()) {
@@ -315,6 +334,9 @@ public class BookingActivity extends AppCompatActivity {
         buildGridUI();
     }
 
+    // Chia nhỏ khung giờ thành các khoảng 30 phút
+    // VD: 5:00, 5:30, ...
+    // sau đó lưu vào timeLabels để hiển thị lên UI
     private void buildTimeLabels() {
         timeLabels.clear();
         try {
@@ -343,6 +365,7 @@ public class BookingActivity extends AppCompatActivity {
         timeSlotCount = timeLabels.size();
     }
 
+    // Vẽ dữ liệu lên màn hình, sử dụng TableLayout
     private void buildGridUI() {
         tableGrid.removeAllViews();
 
@@ -411,6 +434,7 @@ public class BookingActivity extends AppCompatActivity {
         }
     }
 
+    // Tạo ra các ô trong bảng
     private View createSlotCell(int timeIdx, int courtIdx, int width, int height) {
         TextView cell = new TextView(this);
         cell.setLayoutParams(new TableRow.LayoutParams(width, height));
@@ -426,6 +450,8 @@ public class BookingActivity extends AppCompatActivity {
         return cell;
     }
 
+    // Kiểm tra trạng thái (status) của các ô
+    // và hiển thị màu sắc theo đúng trạng thái
     private void applySlotStyle(TextView cell, SlotInfo slot) {
         if (slot.isSelected()) {
             cell.setBackgroundResource(R.drawable.bg_slot_selected);
@@ -461,6 +487,7 @@ public class BookingActivity extends AppCompatActivity {
     }
 
     // Click các ô để chọn khung giờ
+    // và cập nhật thông tin xuống ô thanh toán bên dưới
     private void onSlotClicked(int timeIdx, int courtIdx, TextView cell) {
         SlotInfo slot = slotGrid[timeIdx][courtIdx];
 
@@ -476,6 +503,7 @@ public class BookingActivity extends AppCompatActivity {
         updateBottomBar();
     }
 
+    // Xóa các ô đang được chọn
     private void clearSelection() {
         if (slotGrid == null) return;
         for (int t = 0; t < timeSlotCount; t++) {
@@ -501,6 +529,8 @@ public class BookingActivity extends AppCompatActivity {
         return selected;
     }
 
+    // Hiển thị thông tin thanh toán
+    // Ví dụ: số giờ, số tiền
     private void updateBottomBar() {
         List<SlotInfo> selected = getSelectedSlots();
         int count = selected.size();
@@ -586,6 +616,7 @@ public class BookingActivity extends AppCompatActivity {
         }
     }
 
+    // Thêm dữ liệu vào database
     private void submitBooking(List<SlotInfo> selectedSlots) {
         SimpleDateFormat apiDateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
         String dateStr = apiDateFormat.format(selectedDate.getTime());
@@ -630,6 +661,7 @@ public class BookingActivity extends AppCompatActivity {
         }
     }
 
+    // Hiển thị thông báo khi kết thúc đặt lịch
     private void checkBookingComplete(int total, int success, int fail) {
         if (success + fail < total) return; // Chua xong het
         showLoading(false);

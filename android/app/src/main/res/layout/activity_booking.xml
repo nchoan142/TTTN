@@ -154,6 +154,25 @@
             <View
                 android:layout_width="16dp"
                 android:layout_height="16dp"
+                android:background="@drawable/bg_slot_pending"
+                android:layout_marginEnd="4dp" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Chờ duyệt"
+                android:textColor="#616161"
+                android:textSize="11sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+            <View
+                android:layout_width="16dp"
+                android:layout_height="16dp"
                 android:background="@drawable/bg_slot_booked"
                 android:layout_marginEnd="4dp" />
             <TextView
@@ -179,25 +198,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Khoá"
-                android:textColor="#616161"
-                android:textSize="11sp" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="horizontal"
-            android:gravity="center_vertical">
-            <View
-                android:layout_width="16dp"
-                android:layout_height="16dp"
-                android:background="@drawable/bg_slot_selected"
-                android:layout_marginEnd="4dp" />
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Đang chọn"
                 android:textColor="#616161"
                 android:textSize="11sp" />
         </LinearLayout>
@@ -238,8 +238,6 @@
         android:layout_marginTop="24dp" />
 
     <!-- Grid area: scroll dọc chứa header cố định + scroll ngang cho grid -->
-
-    <!-- Bottom bar -->
     <ScrollView
         android:id="@+id/sv_grid"
         android:layout_width="match_parent"
@@ -263,6 +261,7 @@
 
     </ScrollView>
 
+    <!-- Bottom bar -->
     <LinearLayout
         android:id="@+id/bottom_bar"
         android:layout_width="match_parent"

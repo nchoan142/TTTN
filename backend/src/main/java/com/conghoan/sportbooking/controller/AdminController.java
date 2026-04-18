@@ -19,6 +19,7 @@ import java.sql.Statement;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/admin")
@@ -30,6 +31,7 @@ public class AdminController {
     private final BookingRepository bookingRepository;
     private final SportCategoryRepository categoryRepository;
     private final CourtRepository courtRepository;
+    private final TimeSlotRepository timeSlotRepository;
     private final CloudinaryService cloudinaryService;
 
     @Autowired
@@ -325,12 +327,58 @@ public class AdminController {
 
     // ==================== BOOKINGS ====================
 
+//    @GetMapping("/bookings")
+//    public ResponseEntity<ApiResponse<List<Booking>>> getAllBookings() {
+//        return ResponseEntity.ok(ApiResponse.ok(bookingRepository.findAll()));
+//    }
+
     @GetMapping("/bookings")
-    public ResponseEntity<ApiResponse<List<Booking>>> getAllBookings() {
-        return ResponseEntity.ok(ApiResponse.ok(bookingRepository.findAll()));
+    public ResponseEntity<ApiResponse<List<Map<String, Object>>>> getAllBookings() {
+        List<Booking> bookings = bookingRepository.findAll();
+
+        List<Map<String, Object>> result = bookings.stream().map(b -> {
+            Map<String, Object> map = new HashMap<>();
+            map.put("id", b.getId());
+            map.put("status", b.getStatus().name());
+            map.put("bookingDate", b.getBookingDate().toString());
+            map.put("startTime", b.getStartTime().toString());
+            map.put("endTime", b.getEndTime().toString());
+            map.put("totalPrice", b.getTotalPrice());
+
+            // Thông tin User
+            if (b.getUser() != null) {
+                map.put("userName", b.getUser().getFullName());
+            }
+
+            // Xử lý lồng ghép dữ liệu để Android Adapter đọc được
+            Map<String, Object> courtMap = new HashMap<>();
+            if (b.getCourt() != null) {
+                courtMap.put("name", b.getCourt().getName());
+
+                Venue v = b.getCourt().getVenue();
+                if (v != null) {
+                    Map<String, Object> venueMap = new HashMap<>();
+                    venueMap.put("name", v.getName());
+
+                    // Lấy thông tin Category
+                    if (v.getCategory() != null) {
+                        Map<String, Object> catMap = new HashMap<>();
+                        catMap.put("name", v.getCategory().getName());
+                        venueMap.put("category", catMap);
+                    }
+                    courtMap.put("venue", venueMap);
+                }
+            }
+            map.put("court", courtMap);
+
+            return map;
+        }).collect(Collectors.toList());
+
+        return ResponseEntity.ok(ApiResponse.ok(result));
     }
 
     @PutMapping("/bookings/{id}/status")
+    @org.springframework.transaction.annotation.Transactional
     public ResponseEntity<ApiResponse<Booking>> updateBookingStatus(
             @PathVariable Long id,
             @RequestBody Map<String, String> body) {
@@ -342,6 +390,33 @@ public class AdminController {
             Booking.BookingStatus status = Booking.BookingStatus.valueOf(statusName);
             booking.setStatus(status);
             bookingRepository.save(booking);
+
+            // Khi admin xác nhận -> đảm bảo time slots là BOOKED
+            if (status == Booking.BookingStatus.CONFIRMED) {
+                List<TimeSlot> slots = timeSlotRepository.findByCourtIdAndDate(
+                        booking.getCourt().getId(), booking.getBookingDate());
+                for (TimeSlot slot : slots) {
+                    if (slot.getBooking() != null && booking.getId().equals(slot.getBooking().getId())) {
+                        if (slot.getStatus() != TimeSlot.SlotStatus.BOOKED) {
+                            slot.setStatus(TimeSlot.SlotStatus.BOOKED);
+                            timeSlotRepository.save(slot);
+                        }
+                    }
+                }
+            }
+
+            // Khi admin huỷ lịch -> giải phóng các time slots đã đặt
+            if (status == Booking.BookingStatus.CANCELLED) {
+                List<TimeSlot> slots = timeSlotRepository.findByCourtIdAndDate(
+                        booking.getCourt().getId(), booking.getBookingDate());
+                for (TimeSlot slot : slots) {
+                    if (slot.getBooking() != null && booking.getId().equals(slot.getBooking().getId())) {
+                        slot.setStatus(TimeSlot.SlotStatus.AVAILABLE);
+                        slot.setBooking(null);
+                        timeSlotRepository.save(slot);
+                    }
+                }
+            }
 
             return ResponseEntity.ok(ApiResponse.ok("Cập nhật trạng thái thành công", booking));
         } catch (IllegalArgumentException e) {

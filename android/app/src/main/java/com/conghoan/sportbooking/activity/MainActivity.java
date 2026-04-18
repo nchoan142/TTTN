@@ -1,5 +1,6 @@
 package com.conghoan.sportbooking.activity;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -12,6 +13,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -80,6 +83,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        // Update lại danh sách sân khi quay lại MainActivity
+        loadVenuesFromApi();
         // Khi quay lại MainActivity, reset bottom nav về tab Home
         bottomNav.setSelectedItemId(R.id.nav_home);
     }
@@ -94,12 +99,15 @@ public class MainActivity extends AppCompatActivity {
         progressBar = findViewById(R.id.progress_bar);
     }
 
+    // Lấy dữ liệu từ SharedPreferences
+    // và hiển thị lên UI
     private void loadUserInfo() {
         SharedPreferences prefs = getSharedPreferences(PREF_NAME, MODE_PRIVATE);
         String fullName = prefs.getString("fullName", "Bạn");
         tvGreeting.setText("Xin chào, " + fullName + "!");
     }
 
+    // Lấy thời gian hiện tại và hiển thị lên UI
     private void setCurrentDate() {
         Calendar cal = Calendar.getInstance();
         int dayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
@@ -109,6 +117,7 @@ public class MainActivity extends AppCompatActivity {
         tvDate.setText(formattedDate);
     }
 
+    // Setup các ngày trong tuần theo Việt Nam
     private String getDayOfWeekInVietnamese(int dayOfWeek) {
         switch (dayOfWeek) {
             case Calendar.MONDAY: return "Thứ Hai";
@@ -123,7 +132,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setupAdapters() {
-        // Categories adapter
         categoryAdapter = new CategoryAdapter(this, categoryList, (category, position) -> {
             selectedCategoryName = category.getName();
             filterByCategory(selectedCategoryName);
@@ -131,14 +139,14 @@ public class MainActivity extends AppCompatActivity {
         rvCategories.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         rvCategories.setAdapter(categoryAdapter);
 
-        // Venues adapter
         venueAdapter = new VenueAdapter(this, filteredVenues);
         rvVenues.setLayoutManager(new LinearLayoutManager(this));
         rvVenues.setNestedScrollingEnabled(false);
         rvVenues.setAdapter(venueAdapter);
     }
 
-    // --- API: Load danh mục ---
+    // Lấy các danh mục (category) từ API
+    // Hiển thị các danh mục lên thanh recycler view ngang
     private void loadCategoriesFromApi() {
         apiService.getCategories().enqueue(new Callback<Map<String, Object>>() {
             @Override
@@ -196,6 +204,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    // Gán icon cho các môn thể thao
     private int mapCategoryIcon(String name) {
         if (name == null) return R.drawable.ic_sport_pickleball;
         String lower = name.toLowerCase();
@@ -208,7 +217,7 @@ public class MainActivity extends AppCompatActivity {
         return R.drawable.ic_sport_pickleball;
     }
 
-    // --- API: Load danh sách sân ---
+    // Lấy danh sách sân từ API
     private void loadVenuesFromApi() {
         showLoading(true);
         apiService.getVenues().enqueue(new Callback<Map<String, Object>>() {
@@ -260,6 +269,7 @@ public class MainActivity extends AppCompatActivity {
         filterByCategory(selectedCategoryName);
     }
 
+    // Chuyển dữ liệu từ Map sang VenueItem
     private VenueItem mapToVenueItem(Map<String, Object> item) {
         try {
             long id = getIdFromMap(item);
@@ -290,7 +300,9 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    // --- Filter logic ---
+    // Lọc sân theo danh mục (category)
+    // ví dụ: khi người dùng chọn Pickleball
+    // thì hiển thị tất cả các sân Pickleball
     private void filterByCategory(String categoryName) {
         filteredVenues.clear();
         if (categoryName == null || categoryName.isEmpty()) {
@@ -324,6 +336,8 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    // Lọc thông tin theo từ khóa người dùng nhập
+    // trên thanh tìm kiếm
     private void filterVenuesByName(String query) {
         List<VenueItem> result = new ArrayList<>();
         if (query.isEmpty()) {
@@ -341,7 +355,7 @@ public class MainActivity extends AppCompatActivity {
         venueAdapter.updateList(result);
     }
 
-    // --- Bottom Navigation ---
+
     private void setupBottomNav() {
         bottomNav.setOnItemSelectedListener(item -> {
             int id = item.getItemId();
@@ -365,7 +379,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    // --- Tiện ích ---
+
     private void showLoading(boolean show) {
         if (progressBar != null) {
             progressBar.setVisibility(show ? View.VISIBLE : View.GONE);
@@ -392,7 +406,6 @@ public class MainActivity extends AppCompatActivity {
         if (val instanceof Number) return ((Number) val).doubleValue();
         return 0.0;
     }
-
     private int getIntFromMap(Map<String, Object> map, String key) {
         Object val = map.get(key);
         if (val instanceof Number) return ((Number) val).intValue();

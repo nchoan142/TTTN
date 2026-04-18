@@ -2,6 +2,7 @@ package com.conghoan.sportbooking.model;
 
 public class SlotInfo {
     public static final String STATUS_AVAILABLE = "AVAILABLE";
+    public static final String STATUS_PENDING = "PENDING";
     public static final String STATUS_BOOKED = "BOOKED";
     public static final String STATUS_LOCKED = "LOCKED";
     public static final String STATUS_EVENT = "EVENT";

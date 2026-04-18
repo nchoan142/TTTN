@@ -84,13 +84,32 @@ public class AdminBookingAdapter extends RecyclerView.Adapter<AdminBookingAdapte
         if (courtObj instanceof Map) {
             Map<String, Object> court = (Map<String, Object>) courtObj;
             courtInfo = getStr(court, "name");
+
             Object venueObj = court.get("venue");
             if (venueObj instanceof Map) {
-                String venueName = getStr((Map<String, Object>) venueObj, "name");
-                if (!venueName.isEmpty()) courtInfo += " - " + venueName;
+                Map<String, Object> venue = (Map<String, Object>) venueObj;
+                String venueName = getStr(venue, "name");
+
+                // Lấy tên Category (Môn thể thao)
+                String categoryName = "";
+                Object categoryObj = venue.get("category");
+                if (categoryObj instanceof Map) {
+                    categoryName = getStr((Map<String, Object>) categoryObj, "name");
+                }
+
+                // Kết hợp chuỗi: Ví dụ: Sân 2 - Tên Sân - Môn thể thao
+                if (!venueName.isEmpty()) {
+                    courtInfo += " - " + venueName;
+                }
+                if (!categoryName.isEmpty()) {
+                    courtInfo += " - " + categoryName;
+                }
             }
         }
-        if (courtInfo.isEmpty()) courtInfo = getStr(booking, "courtName");
+
+        if (courtInfo.isEmpty()) {
+            courtInfo = getStr(booking, "courtName");
+        }
         holder.tvCourt.setText(courtInfo.isEmpty() ? "--" : courtInfo);
 
         // Date
@@ -114,7 +133,7 @@ public class AdminBookingAdapter extends RecyclerView.Adapter<AdminBookingAdapte
         holder.tvStatus.setText(getStatusLabel(status));
         applyStatusStyle(holder.tvStatus, status);
 
-        // Show confirm button for PENDING bookings
+        // Hiển thị nút Xác nhận
         if ("PENDING".equals(status)) {
             holder.btnConfirm.setVisibility(View.VISIBLE);
             holder.btnConfirm.setOnClickListener(v -> {
@@ -126,7 +145,7 @@ public class AdminBookingAdapter extends RecyclerView.Adapter<AdminBookingAdapte
             holder.btnConfirm.setVisibility(View.GONE);
         }
 
-        // Show cancel button for PENDING & CONFIRMED bookings (admin có quyền huỷ)
+        // Hiển thị nút Hủy lịch
         if ("PENDING".equals(status) || "CONFIRMED".equals(status)) {
             holder.btnCancel.setVisibility(View.VISIBLE);
             holder.btnCancel.setOnClickListener(v -> {

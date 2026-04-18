@@ -102,6 +102,7 @@ public class ExploreActivity extends AppCompatActivity {
         String[] categoryNames = {null, "Pickleball", "Cầu lông", "Bóng đá",
                 "Tennis", "Bóng chuyền", "Bóng rổ"};
 
+        // Khi click 1 môn thể thao, nó sẽ được lưu vào selectedCategory
         for (int i = 0; i < categoryChips.length; i++) {
             final int index = i;
             categoryChips[i].setOnClickListener(v -> {
@@ -112,6 +113,7 @@ public class ExploreActivity extends AppCompatActivity {
         }
     }
 
+    // Thay đổi màu của chip các môn thể thao khi được chọn
     private void updateCategoryChipUI(int activeIndex) {
         for (int i = 0; i < categoryChips.length; i++) {
             if (i == activeIndex) {
@@ -142,6 +144,7 @@ public class ExploreActivity extends AppCompatActivity {
         });
     }
 
+    // Thay đổi màu của chip đánh giá khi được chọn
     private void updateSortChipUI(int activeIndex) {
         for (int i = 0; i < sortChips.length; i++) {
             if (i == activeIndex) {
@@ -154,6 +157,9 @@ public class ExploreActivity extends AppCompatActivity {
         }
     }
 
+    // Lọc danh sách các sân theo danh mục (category)
+    // và sắp xếp theo đánh giá (rating) hoặc giá tiền (price)
+    // sau đó, hiển thị lên UI
     private void applyFilterAndSort() {
         displayedVenues.clear();
         if (selectedCategory == null) {
@@ -169,11 +175,11 @@ public class ExploreActivity extends AppCompatActivity {
 
         switch (selectedSort) {
             case 0: // Đánh giá cao nhất
-                Collections.sort(displayedVenues, (a, b) ->
+                displayedVenues.sort((a, b) ->
                         Double.compare(b.getRating(), a.getRating()));
                 break;
             case 1: // Giá thấp nhất
-                Collections.sort(displayedVenues, (a, b) ->
+                displayedVenues.sort((a, b) ->
                         Double.compare(a.getPricePerSlot(), b.getPricePerSlot()));
                 break;
             case 2: // Gần nhất - placeholder, giữ nguyên thứ tự
@@ -184,6 +190,7 @@ public class ExploreActivity extends AppCompatActivity {
         updateEmptyState();
     }
 
+    // Kiểm tra xem có sân nào thỏa mãn điều kiện không
     private void updateEmptyState() {
         if (displayedVenues.isEmpty()) {
             llEmpty.setVisibility(View.VISIBLE);
@@ -194,6 +201,7 @@ public class ExploreActivity extends AppCompatActivity {
         }
     }
 
+    // Lấy danh sách tất cả các sân từ API
     private void loadVenuesFromApi() {
         showLoading(true);
         apiService.getVenues().enqueue(new Callback<Map<String, Object>>() {
@@ -233,6 +241,7 @@ public class ExploreActivity extends AppCompatActivity {
         });
     }
 
+    // Nếu API bị lỗi thì sẽ lấy dữ liệu này để hiển thị
     private void loadFallbackVenues() {
         allVenues.clear();
         allVenues.add(new VenueItem(1, "Sân Pickleball Quận 1", "123 Lê Lợi, Quận 1, TP.HCM",
@@ -246,6 +255,7 @@ public class ExploreActivity extends AppCompatActivity {
         applyFilterAndSort();
     }
 
+    // Chuyển dữ liệu từ Map sang VenueItem
     private VenueItem mapToVenueItem(Map<String, Object> item) {
         try {
             long id = getIdFromMap(item);

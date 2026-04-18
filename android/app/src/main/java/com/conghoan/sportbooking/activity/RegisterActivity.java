@@ -105,11 +105,9 @@ public class RegisterActivity extends AppCompatActivity {
             return;
         }
 
-        // Disable button to prevent double-tap
         btnRegister.setEnabled(false);
         btnRegister.setText("Đang xử lý...");
 
-        // Call real API
         ApiService apiService = ApiClient.getApiService();
         Map<String, String> body = new HashMap<>();
         body.put("fullName", fullName);
@@ -125,7 +123,7 @@ public class RegisterActivity extends AppCompatActivity {
 
                 if (response.isSuccessful()) {
                     Toast.makeText(RegisterActivity.this, "Đăng ký thành công! Vui lòng đăng nhập.", Toast.LENGTH_LONG).show();
-                    // Navigate to LoginActivity
+
                     Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
                     startActivity(intent);

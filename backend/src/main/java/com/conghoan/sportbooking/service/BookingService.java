@@ -62,7 +62,7 @@ public class BookingService {
             if (isOverlapping(slot.getStartTime(), slot.getEndTime(),
                     request.getStartTime(), request.getEndTime())) {
                 if (slot.getStatus() == TimeSlot.SlotStatus.AVAILABLE) {
-                    slot.setStatus(TimeSlot.SlotStatus.BOOKED);
+                    slot.setStatus(TimeSlot.SlotStatus.PENDING);
                     slot.setBooking(booking);
                     timeSlotRepository.save(slot);
                 }
