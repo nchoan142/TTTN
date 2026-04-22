@@ -1,5 +1,6 @@
 package com.conghoan.sportbooking.activity;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.text.InputType;
 import android.view.View;
@@ -246,6 +247,7 @@ public class AdminActivity extends AppCompatActivity {
     private void loadVenues() {
         showLoading(true);
         apiService.getAdminVenues().enqueue(new Callback<Map<String, Object>>() {
+            @SuppressLint("SetTextI18n")
             @Override
             public void onResponse(Call<Map<String, Object>> call, Response<Map<String, Object>> response) {
                 showLoading(false);
@@ -256,6 +258,7 @@ public class AdminActivity extends AppCompatActivity {
                     venueList.addAll(data);
                     adminVenueAdapter.notifyDataSetChanged();
                     tvEmpty.setVisibility(venueList.isEmpty() ? View.VISIBLE : View.GONE);
+                    btnTabVenues.setText("Sân thể thao (" + venueList.size() + ")");
                 } else {
                     tvEmpty.setVisibility(View.VISIBLE);
                 }
@@ -284,6 +287,7 @@ public class AdminActivity extends AppCompatActivity {
                     bookingList.addAll(data);
                     adminBookingAdapter.notifyDataSetChanged();
                     tvEmpty.setVisibility(bookingList.isEmpty() ? View.VISIBLE : View.GONE);
+                    btnTabBookings.setText("Lịch đặt (" + bookingList.size() + ")");
                 } else {
                     tvEmpty.setVisibility(View.VISIBLE);
                 }
@@ -312,6 +316,7 @@ public class AdminActivity extends AppCompatActivity {
                     categoryList.addAll(data);
                     adminCategoryAdapter.notifyDataSetChanged();
                     tvEmpty.setVisibility(categoryList.isEmpty() ? View.VISIBLE : View.GONE);
+                    btnTabCategories.setText("Danh mục (" + categoryList.size() + ")");
                 } else {
                     tvEmpty.setVisibility(View.VISIBLE);
                 }

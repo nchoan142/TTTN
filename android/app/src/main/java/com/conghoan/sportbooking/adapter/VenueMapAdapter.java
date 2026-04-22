@@ -65,6 +65,8 @@ public class VenueMapAdapter extends RecyclerView.Adapter<VenueMapAdapter.MapVie
                     context.startActivity(mapIntent);
                 } catch (Exception e) {
                     // Nếu không có Google Maps, mở trình duyệt
+                    // Uri.endcode(address) mã hóa địa chỉ
+                    // theo đúng định dạng của Google Maps
                     Uri webUri = Uri.parse("https://www.google.com/maps/search/?api=1&query=" + Uri.encode(address));
                     Intent webIntent = new Intent(Intent.ACTION_VIEW, webUri);
                     context.startActivity(webIntent);

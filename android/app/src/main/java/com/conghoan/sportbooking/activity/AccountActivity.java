@@ -124,7 +124,7 @@ public class AccountActivity extends AppCompatActivity {
     // họ tên và số điện thoại
     private void performUpdateProfile() {
         String fullName = etFullName.getText().toString().trim();
-//        String email = etEmail.getText().toString().trim();
+        String email = etEmail.getText().toString().trim();
         String phone = etPhone.getText().toString().trim();
 
         // Validate
@@ -138,7 +138,7 @@ public class AccountActivity extends AppCompatActivity {
         // Chuẩn bị Body (ở đây là 1 Map)
         Map<String, String> body = new HashMap<>();
         body.put("fullName", fullName);
-//        body.put("email", email);
+        body.put("email", email);
         body.put("phone", phone);
 
         // Gọi API
