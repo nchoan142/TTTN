@@ -26,7 +26,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
-        // Lấy chỗi header có tên là Authorization
+        // Lấy chuỗi header có tên là Authorization
         String header = request.getHeader("Authorization");
 
         if (header != null && header.startsWith("Bearer ")) {
