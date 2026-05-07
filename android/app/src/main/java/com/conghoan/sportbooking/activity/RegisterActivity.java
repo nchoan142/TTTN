@@ -133,7 +133,7 @@ public class RegisterActivity extends AppCompatActivity {
                     if (response.code() == 409) {
                         errorMsg = "Email đã được sử dụng";
                     } else if (response.code() == 400) {
-                        errorMsg = "Thông tin đăng ký không hợp lệ";
+                        errorMsg = "Tài khoản đã tồn tại";
                     }
                     Toast.makeText(RegisterActivity.this, errorMsg, Toast.LENGTH_LONG).show();
                 }

@@ -78,19 +78,16 @@ public class AdminUserAdapter extends RecyclerView.Adapter<AdminUserAdapter.View
         holder.tvUserRole.setText(role);
         int badgeColor;
         int textColor;
-        switch (role) {
-            case "ADMIN":
-                badgeColor = 0xFFFFCDD2;
-                textColor = 0xFFC62828;
-                break;
-            case "OWNER":
-                badgeColor = 0xFFFFF9C4;
-                textColor = 0xFFF57F17;
-                break;
-            default:
-                badgeColor = 0xFFE8F5E9;
-                textColor = 0xFF2E7D32;
-                break;
+        if (role.equals("ADMIN")) {
+            badgeColor = 0xFFFFCDD2;
+            textColor = 0xFFC62828;
+            //            case "OWNER":
+//                badgeColor = 0xFFFFF9C4;
+//                textColor = 0xFFF57F17;
+//                break;
+        } else {
+            badgeColor = 0xFFE8F5E9;
+            textColor = 0xFF2E7D32;
         }
         GradientDrawable badgeBg = new GradientDrawable();
         badgeBg.setColor(badgeColor);

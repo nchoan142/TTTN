@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#F5F5F5"
@@ -244,7 +245,7 @@
             android:layout_weight="1"
             android:text="Người dùng"
             android:textAllCaps="false"
-            android:textSize="9sp"
+            android:textSize="8sp"
             app:backgroundTint="#2E7D32"
             app:cornerRadius="10dp" />
 
@@ -255,12 +256,12 @@
             android:layout_marginStart="4dp"
             android:layout_marginEnd="4dp"
             android:layout_weight="1"
-            android:text="Sân"
+            android:text="Sân thể thao"
             android:textAllCaps="false"
-            android:textSize="9sp"
+            android:textColor="#757575"
+            android:textSize="8sp"
             app:backgroundTint="#E0E0E0"
-            app:cornerRadius="10dp"
-            android:textColor="#757575" />
+            app:cornerRadius="10dp" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_tab_bookings"
@@ -271,10 +272,10 @@
             android:layout_weight="1"
             android:text="Lịch đặt"
             android:textAllCaps="false"
-            android:textSize="9sp"
+            android:textColor="#757575"
+            android:textSize="8sp"
             app:backgroundTint="#E0E0E0"
-            app:cornerRadius="10dp"
-            android:textColor="#757575" />
+            app:cornerRadius="10dp" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_tab_categories"
@@ -284,10 +285,10 @@
             android:layout_weight="1"
             android:text="Danh mục"
             android:textAllCaps="false"
-            android:textSize="9sp"
+            android:textColor="#757575"
+            android:textSize="8sp"
             app:backgroundTint="#E0E0E0"
-            app:cornerRadius="10dp"
-            android:textColor="#757575" />
+            app:cornerRadius="10dp" />
 
     </LinearLayout>
 
@@ -333,9 +334,9 @@
             android:layout_margin="16dp"
             android:contentDescription="Thêm mới"
             android:src="@drawable/ic_add"
-            android:visibility="gone"
             app:backgroundTint="#2E7D32"
-            app:tint="@android:color/white" />
+            app:tint="@android:color/white"
+            tools:visibility="visible" />
 
     </FrameLayout>
 

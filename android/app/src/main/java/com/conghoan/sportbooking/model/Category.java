@@ -6,12 +6,21 @@ public class Category {
     private int iconResId;
     private boolean selected;
 
+    private String iconUrl;
+
     public Category() {}
 
     public Category(long id, String name, int iconResId, boolean selected) {
         this.id = id;
         this.name = name;
         this.iconResId = iconResId;
+        this.selected = selected;
+    }
+
+    public Category(long id, String name, String iconUrl, boolean selected) {
+        this.id = id;
+        this.name = name;
+        this.iconUrl = iconUrl;
         this.selected = selected;
     }
 
@@ -26,4 +35,12 @@ public class Category {
 
     public boolean isSelected() { return selected; }
     public void setSelected(boolean selected) { this.selected = selected; }
+
+    public String getIconUrl() {
+        return iconUrl;
+    }
+
+    public void setIconUrl(String iconUrl) {
+        this.iconUrl = iconUrl;
+    }
 }

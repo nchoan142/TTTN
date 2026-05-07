@@ -99,21 +99,33 @@ public class VenueController {
         }
 
         // Lấy status trong bảng bookings
-        List<Booking> confirmedBookings = bookingRepository.findByCourtVenueIdAndBookingDate(id, date);
+//        List<Booking> confirmedBookings = bookingRepository.findByCourtVenueIdAndBookingDate(id, date);
+        List<Booking> allBookings = bookingRepository.findByCourtVenueIdAndBookingDate(id, date);
         Map<String, String> liveStatusMap = new HashMap<>();
 
-        for (Booking b : confirmedBookings) {
-            // Kiểm tra trạng thái CONFIRMED từ Enum BookingStatus
-            // Nếu có trong Bookings thì lấy CONFIRMED, không thì lấy từ TimeSlots
-            if (b.getStatus() == Booking.BookingStatus.CONFIRMED) {
-                LocalTime slotT = b.getStartTime();
-                while (slotT.isBefore(b.getEndTime())) {
-                    String key = b.getCourt().getId() + "_" + slotT.toString();
-                    liveStatusMap.put(key, "CONFIRMED");
-                    slotT = slotT.plusMinutes(30);
-                }
+        for (Booking b : allBookings) {
+            String statusName = b.getStatus().name();
+
+            LocalTime slotT = b.getStartTime();
+            while (slotT.isBefore(b.getEndTime())) {
+                String key = b.getCourt().getId() + "_" + slotT.toString();
+                liveStatusMap.put(key, statusName);
+                slotT = slotT.plusMinutes(30);
             }
         }
+
+//        for (Booking b : confirmedBookings) {
+//            // Kiểm tra trạng thái CONFIRMED từ Enum BookingStatus
+//            // Nếu có trong Bookings thì lấy CONFIRMED, không thì lấy từ TimeSlots
+//            if (b.getStatus() == Booking.BookingStatus.CONFIRMED) {
+//                LocalTime slotT = b.getStartTime();
+//                while (slotT.isBefore(b.getEndTime())) {
+//                    String key = b.getCourt().getId() + "_" + slotT.toString();
+//                    liveStatusMap.put(key, "CONFIRMED");
+//                    slotT = slotT.plusMinutes(30);
+//                }
+//            }
+//        }
 
         // Build flat list cho Android
         List<Map<String, Object>> result = new ArrayList<>();

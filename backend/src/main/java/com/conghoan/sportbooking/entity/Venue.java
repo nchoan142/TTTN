@@ -28,10 +28,6 @@ public class Venue {
 
     private String imageUrl;
 
-//    private Double latitude;
-//
-//    private Double longitude;
-
     private LocalTime openTime;
 
     private LocalTime closeTime;
