@@ -228,7 +228,7 @@ public class AdminActivity extends AppCompatActivity {
                     userList.addAll(data);
                     adminUserAdapter.notifyDataSetChanged();
                     tvEmpty.setVisibility(userList.isEmpty() ? View.VISIBLE : View.GONE);
-                    btnTabUsers.setText("Người dùng (" + userList.size() + ")");
+//                    btnTabUsers.setText("Người dùng (" + userList.size() + ")");
                 } else {
                     tvEmpty.setVisibility(View.VISIBLE);
                 }
@@ -258,7 +258,7 @@ public class AdminActivity extends AppCompatActivity {
                     venueList.addAll(data);
                     adminVenueAdapter.notifyDataSetChanged();
                     tvEmpty.setVisibility(venueList.isEmpty() ? View.VISIBLE : View.GONE);
-                    btnTabVenues.setText("Sân thể thao (" + venueList.size() + ")");
+//                    btnTabVenues.setText("Sân thể thao (" + venueList.size() + ")");
                 } else {
                     tvEmpty.setVisibility(View.VISIBLE);
                 }
@@ -287,7 +287,7 @@ public class AdminActivity extends AppCompatActivity {
                     bookingList.addAll(data);
                     adminBookingAdapter.notifyDataSetChanged();
                     tvEmpty.setVisibility(bookingList.isEmpty() ? View.VISIBLE : View.GONE);
-                    btnTabBookings.setText("Lịch đặt (" + bookingList.size() + ")");
+//                    btnTabBookings.setText("Lịch đặt (" + bookingList.size() + ")");
                 } else {
                     tvEmpty.setVisibility(View.VISIBLE);
                 }
@@ -335,7 +335,8 @@ public class AdminActivity extends AppCompatActivity {
     private void showRoleDialog(Map<String, Object> user, int position) {
         String currentRole = user.get("role") != null ? user.get("role").toString() : "USER";
         String userName = user.get("fullName") != null ? user.get("fullName").toString() : "N/A";
-        String[] roles = {"USER", "OWNER", "ADMIN"};
+//        String[] roles = {"USER", "OWNER", "ADMIN"};
+        String[] roles = {"USER", "ADMIN"};
         int checkedIndex = 0;
         for (int i = 0; i < roles.length; i++) {
             if (roles[i].equals(currentRole)) {
@@ -419,9 +420,10 @@ public class AdminActivity extends AppCompatActivity {
                     adminUserAdapter.notifyItemRangeChanged(position, userList.size());
                     btnTabUsers.setText("Người dùng (" + userList.size() + ")");
                     Toast.makeText(AdminActivity.this, "Đã xóa người dùng thành công", Toast.LENGTH_SHORT).show();
+                    loadUsers();
                     loadStats();
                 } else {
-                    Toast.makeText(AdminActivity.this, "Lỗi xóa người dùng", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AdminActivity.this, "Không thể xóa người dùng", Toast.LENGTH_SHORT).show();
                 }
             }
 
@@ -745,7 +747,7 @@ public class AdminActivity extends AppCompatActivity {
                                 loadVenues();
                                 loadStats();
                             } else {
-                                Toast.makeText(AdminActivity.this, "Không xoá được sân (có thể đang có lịch đặt)", Toast.LENGTH_LONG).show();
+                                Toast.makeText(AdminActivity.this, "Sân có booking không thể xóa", Toast.LENGTH_LONG).show();
                             }
                         }
 
@@ -902,6 +904,7 @@ public class AdminActivity extends AppCompatActivity {
                                 adminCategoryAdapter.notifyItemRemoved(position);
                                 adminCategoryAdapter.notifyItemRangeChanged(position, categoryList.size());
                                 Toast.makeText(AdminActivity.this, "Đã xóa danh mục \"" + name + "\"", Toast.LENGTH_SHORT).show();
+                                loadCategories();
                             } else {
                                 Toast.makeText(AdminActivity.this, "Lỗi xóa danh mục", Toast.LENGTH_SHORT).show();
                             }

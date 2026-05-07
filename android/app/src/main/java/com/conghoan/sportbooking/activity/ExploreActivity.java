@@ -1,5 +1,6 @@
 package com.conghoan.sportbooking.activity;
 
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -119,9 +120,11 @@ public class ExploreActivity extends AppCompatActivity {
             if (i == activeIndex) {
                 categoryChips[i].setBackgroundResource(R.drawable.bg_chip_active);
                 categoryChips[i].setTextColor(getResources().getColor(R.color.text_white));
+                categoryChips[i].setTypeface(null, Typeface.BOLD);
             } else {
                 categoryChips[i].setBackgroundResource(R.drawable.bg_chip);
                 categoryChips[i].setTextColor(getResources().getColor(R.color.green_primary));
+                categoryChips[i].setTypeface(null, Typeface.NORMAL);
             }
         }
     }
@@ -150,9 +153,11 @@ public class ExploreActivity extends AppCompatActivity {
             if (i == activeIndex) {
                 sortChips[i].setBackgroundResource(R.drawable.bg_chip_active);
                 sortChips[i].setTextColor(getResources().getColor(R.color.text_white));
+                sortChips[i].setTypeface(null, Typeface.BOLD);
             } else {
                 sortChips[i].setBackgroundResource(R.drawable.bg_chip);
                 sortChips[i].setTextColor(getResources().getColor(R.color.green_primary));
+                sortChips[i].setTypeface(null, Typeface.NORMAL);
             }
         }
     }

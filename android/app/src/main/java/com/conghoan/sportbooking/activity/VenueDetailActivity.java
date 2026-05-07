@@ -163,14 +163,14 @@ public class VenueDetailActivity extends AppCompatActivity {
                     parseAndDisplay(data);
                 } else {
                     Log.w(TAG, "API trả về lỗi: " + response.code());
-                    // Gi\u1EEF nguy\u00EAn d\u1EEF li\u1EC7u t\u1EEB intent
+                    // Giữ nguyên dữ liệu từ intent
                 }
             }
 
             @Override
             public void onFailure(Call<Map<String, Object>> call, Throwable t) {
                 Log.e(TAG, "Lỗi gọi API: " + t.getMessage());
-                // Gi\u1EEF nguy\u00EAn d\u1EEF li\u1EC7u t\u1EEB intent nh\u01B0 fallback
+                // Giữ nguyên dữ liệu từ intent như fallback
             }
         });
     }
@@ -226,7 +226,7 @@ public class VenueDetailActivity extends AppCompatActivity {
                     + " - " + (closeTime != null ? closeTime : "22:00") + " (Tất cả các ngày)");
         }
 
-        // Rating
+//        Rating
         if (data.containsKey("rating")) {
             Object ratingObj = data.get("rating");
             if (ratingObj instanceof Number) {
@@ -261,7 +261,7 @@ public class VenueDetailActivity extends AppCompatActivity {
         if (tvPrice != null) {
             if (pricePerSlot > 0) {
                 NumberFormat nf = NumberFormat.getInstance(new Locale("vi", "VN"));
-                tvPrice.setText(nf.format((long) pricePerSlot) + "đ / slot");
+                tvPrice.setText(nf.format((long) pricePerSlot) + "đ/ slot");
             } else {
                 tvPrice.setText("Liên hệ");
             }
@@ -330,6 +330,30 @@ public class VenueDetailActivity extends AppCompatActivity {
         }
     }
 
+    private void calculateAndDisplayAverageRating() {
+        if (reviewsList == null || reviewsList.isEmpty()) {
+            tvReviewRating.setText("0.0");
+            tvReviewCount.setText("(0)");
+            return;
+        }
+
+        double totalRating = 0;
+        int count = reviewsList.size();
+
+        for (Map<String, Object> review : reviewsList) {
+            Object ratingObj = review.get("rating");
+            if (ratingObj instanceof Number) {
+                // Ép kiểu sang double
+                totalRating += ((Number) ratingObj).doubleValue();
+            }
+        }
+
+        double average = totalRating / count;
+
+        // Hiển thị lên tvReviewRating với 1 chữ số thập phân (Ví dụ: 4.5)
+        tvReviewRating.setText(String.format(Locale.getDefault(), "%.1f", average));
+    }
+
     private void loadReviews() {
         apiService.getVenueReviews(venueId).enqueue(new Callback<Map<String, Object>>() {
             @Override
@@ -348,6 +372,7 @@ public class VenueDetailActivity extends AppCompatActivity {
                             }
                         }
                         reviewAdapter.updateData(reviewsList);
+                        calculateAndDisplayAverageRating();
                         updateReviewsVisibility();
                     }
                 } else {

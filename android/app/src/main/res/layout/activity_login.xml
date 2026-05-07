@@ -31,8 +31,8 @@
                 android:layout_width="80dp"
                 android:layout_height="80dp"
                 android:layout_gravity="bottom|start"
-                android:layout_marginBottom="20dp"
                 android:layout_marginStart="20dp"
+                android:layout_marginBottom="20dp"
                 android:background="@drawable/bg_circle_white_15" />
 
             <!-- Icon và tiêu đề -->
@@ -47,8 +47,8 @@
                 <ImageView
                     android:layout_width="52dp"
                     android:layout_height="52dp"
-                    android:src="@drawable/ic_sport_pickleball"
-                    android:contentDescription="Logo" />
+                    android:contentDescription="Logo"
+                    android:src="@drawable/ic_star" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -67,13 +67,13 @@
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="-30dp"
             android:layout_marginStart="16dp"
+            android:layout_marginTop="-30dp"
             android:layout_marginEnd="16dp"
             android:layout_marginBottom="16dp"
+            app:cardBackgroundColor="#FFFFFF"
             app:cardCornerRadius="20dp"
-            app:cardElevation="8dp"
-            app:cardBackgroundColor="#FFFFFF">
+            app:cardElevation="8dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -102,26 +102,26 @@
                 <!-- Ô nhập Email -->
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/til_email"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="16dp"
                     android:hint="Email"
-                    app:startIconDrawable="@drawable/ic_search"
-                    app:startIconTint="@color/green_primary"
                     app:boxCornerRadiusBottomEnd="10dp"
                     app:boxCornerRadiusBottomStart="10dp"
                     app:boxCornerRadiusTopEnd="10dp"
                     app:boxCornerRadiusTopStart="10dp"
                     app:boxStrokeColor="@color/green_primary"
                     app:hintTextColor="@color/green_primary"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                    app:startIconDrawable="@drawable/ic_search"
+                    app:startIconTint="@color/green_primary">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/et_email"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:inputType="textEmailAddress"
                         android:imeOptions="actionNext"
+                        android:inputType="textEmailAddress"
                         android:textSize="15sp" />
 
                 </com.google.android.material.textfield.TextInputLayout>
@@ -129,27 +129,27 @@
                 <!-- Ô nhập Mật khẩu -->
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/til_password"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="8dp"
                     android:hint="Mật khẩu"
-                    app:startIconDrawable="@drawable/ic_booking"
-                    app:startIconTint="@color/green_primary"
-                    app:passwordToggleEnabled="true"
                     app:boxCornerRadiusBottomEnd="10dp"
                     app:boxCornerRadiusBottomStart="10dp"
                     app:boxCornerRadiusTopEnd="10dp"
                     app:boxCornerRadiusTopStart="10dp"
                     app:boxStrokeColor="@color/green_primary"
                     app:hintTextColor="@color/green_primary"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                    app:passwordToggleEnabled="true"
+                    app:startIconDrawable="@drawable/ic_booking"
+                    app:startIconTint="@color/green_primary">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/et_password"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:inputType="textPassword"
                         android:imeOptions="actionDone"
+                        android:inputType="textPassword"
                         android:textSize="15sp" />
 
                 </com.google.android.material.textfield.TextInputLayout>
@@ -162,10 +162,10 @@
                     android:layout_gravity="end"
                     android:layout_marginTop="4dp"
                     android:layout_marginBottom="24dp"
+                    android:padding="4dp"
                     android:text="Quên mật khẩu?"
                     android:textColor="@color/green_primary"
-                    android:textSize="13sp"
-                    android:padding="4dp" />
+                    android:textSize="13sp" />
 
                 <!-- Nút Đăng Nhập -->
                 <com.google.android.material.button.MaterialButton
@@ -173,11 +173,11 @@
                     android:layout_width="match_parent"
                     android:layout_height="52dp"
                     android:background="@drawable/bg_button_green"
+                    android:letterSpacing="0.05"
                     android:text="ĐĂNG NHẬP"
                     android:textColor="#FFFFFF"
-                    android:textStyle="bold"
                     android:textSize="15sp"
-                    android:letterSpacing="0.05"
+                    android:textStyle="bold"
                     app:cornerRadius="12dp"
                     app:rippleColor="#33FFFFFF" />
 
@@ -206,11 +206,11 @@
                 android:id="@+id/tv_register_link"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:padding="4dp"
                 android:text="Đăng ký ngay"
                 android:textColor="@color/green_primary"
                 android:textSize="14sp"
-                android:textStyle="bold"
-                android:padding="4dp" />
+                android:textStyle="bold" />
 
         </LinearLayout>
 

@@ -2,6 +2,7 @@ package com.conghoan.sportbooking.adapter;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.conghoan.sportbooking.R;
 import com.conghoan.sportbooking.model.Category;
 
@@ -46,16 +48,23 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
         Category category = categoryList.get(position);
         holder.tvName.setText(category.getName());
 
-        if (category.getIconResId() != 0) {
-            holder.ivIcon.setImageResource(category.getIconResId());
+//        if (category.getIconResId() != 0) {
+//            holder.ivIcon.setImageResource(category.getIconResId());
+//        }
+
+        if (holder.ivIcon != null && category.getIconUrl() != null && !category.getIconUrl().isEmpty()) {
+            Glide.with(holder.itemView.getContext())
+                    .load(category.getIconUrl())
+                    .centerCrop()
+                    .placeholder(R.drawable.ic_sport_pickleball)
+                    .error(R.drawable.ic_sport_pickleball)
+                    .into(holder.ivIcon);
         }
 
-        // Highlight selected category
         if (category.isSelected()) {
             holder.iconContainer.setBackgroundColor(Color.parseColor("#4CAF50"));
             holder.tvName.setTextColor(Color.parseColor("#2E7D32"));
         } else {
-            // bg_category_circle drawable handles default state
             holder.iconContainer.setBackgroundResource(R.drawable.bg_category_circle);
             holder.tvName.setTextColor(Color.parseColor("#424242"));
         }
@@ -64,11 +73,11 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
             int adapterPosition = holder.getAdapterPosition();
             if (adapterPosition == RecyclerView.NO_ID) return;
 
-            // Deselect all
+
             for (Category cat : categoryList) {
                 cat.setSelected(false);
             }
-            // Select clicked
+
             categoryList.get(adapterPosition).setSelected(true);
             selectedPosition = adapterPosition;
             notifyDataSetChanged();

@@ -1,6 +1,5 @@
 package com.conghoan.sportbooking.activity;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -13,8 +12,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -45,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
     private static final String PREF_NAME = "SportBooking";
 
-    private TextView tvGreeting, tvDate;
+    private TextView tvGreeting, tvDate, tvNoResults, tvNoData;
     private EditText edtSearch;
     private RecyclerView rvCategories, rvVenues;
     private BottomNavigationView bottomNav;
@@ -85,13 +82,35 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         // Update lại danh sách sân khi quay lại MainActivity
         loadVenuesFromApi();
+        loadCategoriesFromApi();
         // Khi quay lại MainActivity, reset bottom nav về tab Home
         bottomNav.setSelectedItemId(R.id.nav_home);
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.d("MainActivity", "onDestroy() called");
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.d("MainActivity", "onPause() called");
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.d("MainActivity", "onStop() called");
+    }
+
+
     private void initViews() {
         tvGreeting = findViewById(R.id.tv_username);
         tvDate = findViewById(R.id.tv_date);
+        tvNoResults = findViewById(R.id.tv_no_results);
+        tvNoData = findViewById(R.id.tv_no_data);
         edtSearch = findViewById(R.id.et_search);
         rvCategories = findViewById(R.id.rv_categories);
         rvVenues = findViewById(R.id.rv_venues);
@@ -163,9 +182,11 @@ public class MainActivity extends AppCompatActivity {
                         Map<String, Object> item = data.get(i);
                         long id = getIdFromMap(item);
                         String name = getStringFromMap(item, "name");
-                        int iconRes = mapCategoryIcon(name);
+//                        int iconRes = mapCategoryIcon(name);
+                        String imageUrl = getStringFromMap(item, "iconUrl");
                         boolean selected = (i == 0);
-                        categoryList.add(new Category(id, name, iconRes, selected));
+//                        categoryList.add(new Category(id, name, iconRes, selected));
+                        categoryList.add(new Category(id, name, imageUrl, selected));
                     }
                     categoryAdapter.updateList(categoryList);
 
@@ -313,9 +334,15 @@ public class MainActivity extends AppCompatActivity {
                     filteredVenues.add(v);
                 }
             }
-            // Nếu không có kết quả, hiện tất cả
+
+            // Nếu không có kết quả
+            // hiển thị tvNoData
             if (filteredVenues.isEmpty()) {
-                filteredVenues.addAll(allVenues);
+                tvNoData.setVisibility(View.VISIBLE);
+                rvVenues.setVisibility(View.GONE);
+            } else {
+                tvNoData.setVisibility(View.GONE);
+                rvVenues.setVisibility(View.VISIBLE);
             }
         }
         venueAdapter.updateList(filteredVenues);
@@ -352,6 +379,18 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }
+
+        // Hiển thị kết quả tìm kiếm
+        // Nếu không có kết quả, hiển thị
+        // "không tìm thấy sân thể thao"
+        if (result.isEmpty()) {
+            rvVenues.setVisibility(View.GONE);
+            tvNoResults.setVisibility(View.VISIBLE);
+        } else {
+            rvVenues.setVisibility(View.VISIBLE);
+            tvNoResults.setVisibility(View.GONE);
+        }
+
         venueAdapter.updateList(result);
     }
 

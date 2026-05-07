@@ -77,6 +77,12 @@ public class BookingActivity extends AppCompatActivity {
         loadSlots();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadSlots();
+    }
+
     private void receiveIntentData() {
         Intent intent = getIntent();
         venueId = intent.getLongExtra("venueId", 1L);
@@ -210,6 +216,7 @@ public class BookingActivity extends AppCompatActivity {
                         slotList = (List<Map<String, Object>>) responseBody.get("data");
                     }
                     parseAndBuildGrid(slotList);
+                    Log.d("CheckAPI", "Gửi API với venueId: " + venueId + " và ngày: " + dateStr);
                 } else {
                     buildDemoGrid();
                 }
@@ -281,15 +288,18 @@ public class BookingActivity extends AppCompatActivity {
             int ti = getIntValue(slot, "timeIndex");
             String status = getStringValue(slot, "status");
 
-            Log.d("CheckStatus", "Ô [" + ti + "][" + ci + "] có status là: " + status);
-
             if (ti < timeSlotCount && ci < courtCount) {
+
+                // Nếu status trả về từ backend là PENDING
+                // set ô đó là màu xám
+                if ("PENDING".equals(status)) {
+                    slotGrid[ti][ci].setStatus(SlotInfo.STATUS_LOCKED);
                 // Nếu status trả về từ backend là CONFIRMED (đã xác nhận)
                 // set ô đó là màu đỏ
-                if ("CONFIRMED".equals(status) || "BOOKED".equals(status)) {
+                } else if ("CONFIRMED".equals(status) || "BOOKED".equals(status)) {
                     slotGrid[ti][ci].setStatus(SlotInfo.STATUS_BOOKED);
                 } else {
-                    slotGrid[ti][ci].setStatus(status != null ? status : SlotInfo.STATUS_AVAILABLE);
+                    slotGrid[ti][ci].setStatus(SlotInfo.STATUS_AVAILABLE);
                 }
             }
 
@@ -688,7 +698,11 @@ public class BookingActivity extends AppCompatActivity {
         Object val = map.get(key);
         if (val instanceof Number) return ((Number) val).intValue();
         if (val instanceof String) {
-            try { return Integer.parseInt((String) val); } catch (Exception e) { return 0; }
+            try {
+                return Integer.parseInt((String) val);
+            } catch (Exception e) {
+                return 0;
+            }
         }
         return 0;
     }
@@ -697,7 +711,11 @@ public class BookingActivity extends AppCompatActivity {
         Object val = map.get(key);
         if (val instanceof Number) return ((Number) val).longValue();
         if (val instanceof String) {
-            try { return Long.parseLong((String) val); } catch (Exception e) { return 0; }
+            try {
+                return Long.parseLong((String) val);
+            } catch (Exception e) {
+                return 0;
+            }
         }
         return 0;
     }
